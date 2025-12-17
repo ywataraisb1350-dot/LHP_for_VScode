@@ -139,3 +139,46 @@ def design():
 
     return design_dict
 
+def create_interpolation_functions(csv_path):
+    df = pd.read_csv(csv_path)
+    
+    x_col_name = df.columns[0]
+    x_data = df[x_col_name].values
+    interpolation_funcs = {}
+    
+    for y_col_name in df.columns[1:]:
+        y_data = df[y_col_name].values
+        f = interp1d(x_data, y_data, kind='linear', bounds_error=False, fill_value="extrapolate")
+        interpolation_funcs[y_col_name] = f
+        
+    return interpolation_funcs
+
+def prop_all(T, label, funcs_dict):
+    if label not in funcs_dict:
+        print(f"Error: Label '{label}' not found in the CSV data.")
+        return None
+    
+    target_function = funcs_dict[label]
+    prop_array = target_function(T)
+    prop_scalar = prop_array.item()
+    
+    return prop_scalar
+
+def prop(T, csv_path, csv_path_inv):
+    all_funcs = create_interpolation_functions(csv_path)
+    sat_inv = create_interpolation_functions(csv_path_inv)
+
+    def P_sat(T):
+        P_sat = prop_all(T, 'P_sat', all_funcs)
+        return P_sat
+    
+    def rho_l(T):
+        rho_l = prop_all(T, 'rho_l', all_funcs)
+        return rho_l
+    
+    prop_dict = {
+        "P_sat":P_sat,
+        "rho_l":rho_l
+    }
+    
+    return prop_dict
