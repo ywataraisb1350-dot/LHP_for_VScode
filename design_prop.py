@@ -71,6 +71,8 @@ def design():
     h_out = 20.0    #[W/m^2-K] 決め打ち外部への放熱伝達率
     h_sink = 800.0  #[W/m^2-K] 決め打ち外部へのコンデンサ放熱伝達率
     grav_ac = 9.8   #gravity_acceralation
+    csv_path = 'R1233zdE.csv'
+    csv_path_inv = 'R1233zdE_inv.csv'
 
     num_cal_ec, num_cal_vl, num_cal_cl, num_cal_ll = 100, 100, 200, 100
     #input zone end
@@ -134,6 +136,8 @@ def design():
     design_dict = {
            "W_ec":W_ec,
            "L_ec":L_ec,
+           "csv_path":csv_path,
+           "csv_path_inv":csv_path_inv
 
     }
 
@@ -164,7 +168,7 @@ def prop_all(T, label, funcs_dict):
     
     return prop_scalar
 
-def prop(T, csv_path, csv_path_inv):
+def prop(csv_path, csv_path_inv):
     all_funcs = create_interpolation_functions(csv_path)
     sat_inv = create_interpolation_functions(csv_path_inv)
 
