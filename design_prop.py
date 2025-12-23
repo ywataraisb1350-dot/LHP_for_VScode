@@ -9,6 +9,9 @@ from datetime import datetime
 def design():
     #design parameter input zone
     Q_load = 5600   #[W]
+    csv_path = 'R1233zdE.csv'
+    csv_path_inv = 'R1233zdE_inv.csv'
+
     W_ec = 320  #mm
     L_ec = 320  #mm
     t_ec_bt = 5 #mm
@@ -29,18 +32,33 @@ def design():
     t_cc_flange = 4
     n_flange = 4
 
-    W_wick = 280
-    L_wick = 280
-    H_wick = 8          #=thickness mm
-    k_wick = 16         #[W/m-K]
-    r_max_pore = 3      #[micro m] not diameter , enter radius
-    epsilon_wick = 0.6  #[-]
-    K_wick = 3.2e-13      #[m^2]
-    contact_angle = 10  #[deg]
-    n_gr = 184           #num of groove
-    w_gr = 3
-    h_gr = 3
-    L_gr = 62 
+    A_ec_btm_up = 20000 #mm^2 
+
+    W_wick_btm = 280
+    L_wick_btm = 280
+    H_wick_btm = 8          #=thickness mm include groove
+    k_wick_btm = 16         #[W/m-K]
+    r_max_pore_btm = 3      #[micro m] not diameter , enter radius
+    epsilon_wick_btm = 0.6  #[-]
+    K_wick_btm = 3.2e-13      #[m^2]
+    contact_angle_btm = 10  #[deg]
+    n_gr_btm = 176           #num of groove
+    w_gr_btm = 3
+    h_gr_btm = 3
+    L_gr_btm = 62 
+
+    W_wick_up = 280
+    L_wick_up = 280
+    H_wick_up = 8          #=thickness mm include groove
+    k_wick_up = 16         #[W/m-K]
+    r_max_pore_up = 3      #[micro m] not diameter , enter radius
+    epsilon_wick_up = 0.6  #[-]
+    K_wick_up = 3.2e-13      #[m^2]
+    contact_angle_up = 10  #[deg]
+    n_gr_up = 176           #num of groove
+    w_gr_up = 3
+    h_gr_up = 3
+    L_gr_up = 62
 
     d_i_vl = 27.6
     d_o_vl = 31.8
@@ -69,8 +87,6 @@ def design():
     h_out = 20.0    #[W/m^2-K] 決め打ち外部への放熱伝達率
     h_sink = 800.0  #[W/m^2-K] 決め打ち外部へのコンデンサ放熱伝達率
     grav_ac = 9.8   #gravity_acceralation
-    csv_path = 'R1233zdE.csv'
-    csv_path_inv = 'R1233zdE_inv.csv'
 
     num_cal_ec, num_cal_vl, num_cal_cl, num_cal_ll = 100, 100, 200, 100
     #input zone end
