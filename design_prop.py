@@ -8,12 +8,13 @@ from datetime import datetime
 
 def design():
     #design parameter input zone
+    Q_load = 5600   #[W]
     W_ec = 320  #mm
     L_ec = 320  #mm
     t_ec_bt = 5 #mm
     t_ec = 10   #mm
     t_ec_up = 5 #mm
-    k_ec = 390 #conductivity
+    k_ec = 390  #conductivity
     H_ec = 40   #mm
 
     r_cc = 160
@@ -26,9 +27,7 @@ def design():
     k_cc_flange = 16
     t_ec_flange = 4
     t_cc_flange = 4
-    t_kubire = 8
-    w_kubire = 25
-    l_kubire = 150
+    n_flange = 4
 
     W_wick = 280
     L_wick = 280
@@ -41,7 +40,7 @@ def design():
     n_gr = 184           #num of groove
     w_gr = 3
     h_gr = 3
-    L_gr = 70 
+    L_gr = 62 
 
     d_i_vl = 27.6
     d_o_vl = 31.8
@@ -65,8 +64,7 @@ def design():
 
     T_amb = 30      #[celsius temp]
     T_sink = 30
-    alpha = 10000   #[W/m^2-K] 蒸発熱伝達率A_ecベースの値
-    #beta = 416     #[W/m^2-K] 凝縮熱伝達率
+    alpha = 2500   #[W/m^2-K] 蒸発熱伝達率A_ecベースの値
     h_hs_ec = 4000  #[W/m^2-K] 熱源-蒸発器熱伝達率
     h_out = 20.0    #[W/m^2-K] 決め打ち外部への放熱伝達率
     h_sink = 800.0  #[W/m^2-K] 決め打ち外部へのコンデンサ放熱伝達率
@@ -180,9 +178,152 @@ def prop(csv_path, csv_path_inv):
         rho_l = prop_all(T, 'rho_l', all_funcs)
         return rho_l
     
+    def rho_g(P, T):
+        #rho_g = P* 0.1305/ (8.311* T)
+        rho_g = prop_all(T, 'rho_g', all_funcs)
+        return rho_g
+    
+    def Cp_l(T):
+        Cp_l = prop(T, 'Cp_l', all_funcs)
+        return Cp_l
+
+    def Cp_g(T):
+        Cp_g = prop(T, 'Cp_g', all_funcs)
+        return Cp_g
+
+    def lambda_lv(T):
+        lambda_lv = prop(T, 'lambda', all_funcs)
+        return lambda_lv
+
+    def k_l(T):
+        k_l = prop(T, 'k_l', all_funcs)
+        return k_l
+
+    def k_g(T):
+        k_g = prop(T, 'k_g', all_funcs)
+        return k_g
+
+    def mu_l(T):
+        mu_l = prop(T, 'mu_l', all_funcs)
+        return mu_l
+
+    def mu_g(T):
+        mu_g = prop(T, 'mu_g', all_funcs)
+        return mu_g
+
+    def Pr_l(T):
+        Pr_l = mu_l(T)* Cp_l(T)/ k_l(T)
+        return Pr_l
+
+    def Pr_g(T):
+        Pr_g = mu_g(T)* Cp_g(T)/ k_g(T)
+        return Pr_g
+
+    def nu_l(T):
+        nu_l = mu_l(T)/ rho_l(T)
+        return nu_l
+
+    def nu_g(P, T):
+        nu_g = mu_g(T)/ rho_g(P, T)
+        return nu_g
+
+    def sigma(T):
+        sigma = 0.06195* (1-(T/438.75))**1.277
+        return sigma
+
+    def Re_l(u, T, d):
+        Re_l = u* d/ nu_l(T)
+        return Re_l
+
+    def Re_g(u, P, T, d):
+        Re_g = u* d/ nu_g(P, T)
+        return Re_g
+
+    def h_l(u, P, T, d):
+        Re_l_res = Re_l(u, T, d)
+        Pr_l_res = Pr_l(T)
+    
+        if Re_l_res < 2300:
+            Nu = 4.36
+            h_l = Nu* k_l(T)/ d
+    
+        else:
+            Nu = 0.023* Re_l_res**(0.8)* Pr_l_res**(0.4)
+            h_l = Nu* k_l(T)/ d
+        
+        return h_l
+
+    def h_g(u, P, T, d):
+        Re_g_res = Re_g(u, P, T, d)
+        Pr_g_res = Pr_g(T)
+    
+        if Re_g_res < 2300:
+            Nu = 4.36
+            h_g = Nu* k_g(T)/ d
+        
+        else:
+            Nu = 0.023* Re_g_res**(0.8)* Pr_g_res**(0.4)
+            h_g = Nu* k_g(T)/ d
+        
+        return h_g
+    
+    def tau_l(u, P, T, d):
+        Re_l_res = Re_l(u, T, d)
+        rho_l_res = rho_l(T)
+    
+        if 0 <= Re_l_res <= 0.01:
+            tau_l = 0
+        
+        elif 0.01 < Re_l_res < 2300:
+            f = 16/Re_l_res
+            tau_l = 0.5* f* rho_l_res* u**2
+        
+        else:
+            f = 0.0791* Re_l_res**(-0.25)
+            tau_l = 0.5* f* rho_l_res* u**2
+        
+        return tau_l
+
+    def tau_g(u, P, T, d):
+        Re_g_res = Re_g(u, P, T, d)
+        rho_g_res = rho_g(P, T)
+    
+        if 0 <= Re_g_res <=0.01:
+            tau_g = 0
+        
+        elif 0.01 < Re_g_res < 2300:
+            f = 16/Re_g_res
+            tau_g = 0.5* f* rho_g_res* u**2
+        
+        else:
+            f = 0.0791* Re_g_res**(-0.25)
+            tau_g = 0.5* f* rho_g_res* u**2
+        
+        return tau_g
+
+    
     prop_dict = {
         "P_sat":P_sat,
-        "rho_l":rho_l
+        "rho_l":rho_l,
+        "rho_g":rho_g,
+        "Cp_l":Cp_l,
+        "Cp_g":Cp_g,
+        "lambda":lambda_lv,
+        "k_l":k_l,
+        "k_g":k_g,
+        "mu_l":mu_l,
+        "mu_g":mu_g,
+        "Pr_l":Pr_l,
+        "Pr_g":Pr_g,
+        "nu_l":nu_l,
+        "nu_g":nu_g,
+        "sigma":sigma,
+        "Re_l":Re_l,
+        "Re_g":Re_g,
+        "h_l":h_l,
+        "h_g":h_g,
+        "tau_l":tau_l,
+        "tau_g":tau_g
     }
     
     return prop_dict
