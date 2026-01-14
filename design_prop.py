@@ -316,7 +316,50 @@ def prop(csv_path, csv_path_inv):
             tau_g = 0.5* f* rho_g_res* u**2
         
         return tau_g
-
+    
+    def Delta_P_2p(u, T, d, x, m_dot, Delta_L):
+        Re_g_sat = u*d*x*     prop(T,'rho_g',all_funcs)/prop(T,'mu_g',all_funcs)
+        Re_l_sat = u*d*(1-x)* prop(T,'rho_l',all_funcs)/prop(T,'mu_l',all_funcs)
+    
+        def f(Re):
+            if 0 <= Re <= 0.01:
+                f = 0
+            elif 0.01<Re<2300:
+                f = 64/Re
+            else:
+                f = 0.3164*Re**(-0.25)
+            
+            return f
+    
+        def C(Re_g, Re_l):
+            if Re_g<1500 and Re_l<1500:
+                C = 5
+            
+            elif Re_g>=1500 and Re_l<1500:
+                C = 12
+            
+            elif Re_g<1500 and Re_l>=1500:
+                C = 10
+            
+            else:
+                C = 20
+            
+            return C
+    
+        C_res = C(Re_g_sat, Re_l_sat)
+    
+        Delta_P_g = 8*f(Re_g_sat)*(m_dot**2 * x**2)*Delta_L/(prop(T,'rho_g', all_funcs)*math.pi**2 * d**5)
+        Delta_P_l = 8*f(Re_l_sat)*(m_dot**2 * (1-x)**2)*Delta_L/(prop(T,'rho_l', all_funcs)*math.pi**2 * d**5)
+    
+        if Delta_P_g > 1e-7:
+            X_LM = math.sqrt(Delta_P_l/Delta_P_g)
+            Delta_P_2p = (1+ C_res* X_LM+ X_LM**2)* Delta_P_g
+        
+        else:
+            X_LM = 0
+            Delta_P_2p = Delta_P_g
+    
+        return Delta_P_2p, C_res, X_LM
     
     prop_dict = {
         "P_sat":P_sat,
@@ -339,7 +382,8 @@ def prop(csv_path, csv_path_inv):
         "h_l":h_l,
         "h_g":h_g,
         "tau_l":tau_l,
-        "tau_g":tau_g
+        "tau_g":tau_g,
+        "Delta_P_2p":Delta_P_2p
     }
     
     return prop_dict
