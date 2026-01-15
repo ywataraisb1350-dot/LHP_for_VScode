@@ -106,7 +106,13 @@ def eval_func(Tec, Tev):
         "Q_cc_ll":Q_cc_ll,
         "Q_ccc_ccin":Q_ccc_ccin,
         "eval_ec[%]":math.sqrt(eval_ec),
-        "eval_cc[%]":math.sqrt(eval_cc)
+        "eval_cc[%]":math.sqrt(eval_cc),
+        "P_cap.":P_cap,
+        "P_loss_wick":P_loss_wick,
+        "P_loss_gr":P_loss_gr,
+        "P_loss_vl":P_loss_vl,
+        "P_loss_cl":P_loss_cl,
+        "P_loss_ll":P_loss_ll
     }
 
     return eval_ec+eval_cc, df_ec, df_vl, df_cl, df_ll, 
