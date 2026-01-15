@@ -75,7 +75,7 @@ def ec_flat(Tec, Tev):
     df_ec = pd.DataFrame(ec_result)
 
     P_cap = 2*p.sigma(Tev)* math.cos(d.contact_angle)/d.r_max_pore
-    P_loss_wick_flat = p.mu_l(Tev)* (d.H_wick- d.H_gr) * M_dot/(d.K_wick* d.A_wick* p.rho_l(Tev)) #
-    P_loss_wick_gr = p.mu_l(Tev)* d.H_gr* M_dot/(d.K_wick* (d.A_wick- d.w_gr* d.L_gr* d.n_gr) * p.rho_l(Tev))
+    P_loss_wick_flat = p.mu_l(Tev)* (d.H_wick- d.h_gr) * M_dot/(d.K_wick* d.A_wick* p.rho_l(Tev)) #
+    P_loss_wick_gr = p.mu_l(Tev)* d.h_gr* M_dot/(d.K_wick* (d.A_wick- d.w_gr* d.L_gr* d.n_gr) * p.rho_l(Tev))
 
     return P, T, df_ec, M_dot, Q_ev, Q_gr, P_loss_gr, P_loss_wick_flat, P_loss_wick_gr, P_cap

@@ -215,8 +215,10 @@ def trans_line(u, P, T, rho, x, phase, M_dot, L, d_i, d_o, d_o_insu, k, k_insu, 
             'G_ex_liq':G_ex
             }
             result.append(current_data)
+            
     P_loss = P_ini- P
     #P_loss = P_loss_all_phase
     T_ave = (T_ini+ T)/2
-    df_line = pd.DataFrame(result)        
+    df_line = pd.DataFrame(result)
+
     return u, P, T, rho, x, phase, df_line, P_loss, T_ave, T_ini

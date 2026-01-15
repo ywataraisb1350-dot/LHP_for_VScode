@@ -41,6 +41,7 @@ def design():
     L_wick = 280
     H_wick = 8
     k_wick = 16
+    K_wick = 3.2*1e-13 #[m^2]
     r_max_pore = 3 #unit micro meter enter radius! not diameter!!!
     epsilon_wick = 0.6
     contact_angle = 10 #deg
@@ -193,6 +194,7 @@ def design():
             "H_wick":H_wick,
             "A_wick":A_wick,
             "k_wick":k_wick,
+            "K_wick":K_wick,
             "r_max_pore":r_max_pore,
             "epsilon_wick":epsilon_wick,
             "contact_angle":contact_angle,
