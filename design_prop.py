@@ -9,6 +9,7 @@ from datetime import datetime
 def design():
     #design parameter input zone
     Q_load = 5600   #[W]
+    A_hs = 152* 79* 8* 1e-6
     csv_path = 'R1233zdE.csv'
     csv_path_inv = 'R1233zdE_inv.csv'
 
@@ -121,12 +122,11 @@ def design():
     t_cc = t_cc*1e-3
     H_cc = H_cc*1e-3
     d_e_cc = 1.3* (((2* math.pi* r_cc)* H_cc)**0.625)/ (((2* math.pi* r_cc)+ H_cc)**0.25)
-
+    
     t_ec_flange = t_ec_flange*1e-3
     t_cc_flange = t_cc_flange*1e-3
-    t_kubire = t_kubire*1e-3
-    w_kubire = w_kubire*1e-3
-    l_kubire = l_kubire*1e-3
+    l_flange = l_flange*1e-3
+    w_flange = w_flange*1e-3
 
     W_wick = W_wick*1e-3
     L_wick = L_wick*1e-3
@@ -154,10 +154,136 @@ def design():
     T_sink = T_sink + 273.15
 
     design_dict = {
-           "W_ec":W_ec,
-           "L_ec":L_ec,
-           "csv_path":csv_path,
-           "csv_path_inv":csv_path_inv
+            "Q_load":Q_load,
+            "A_hs":A_hs,
+            "csv_path":csv_path,
+            "csv_path_inv":csv_path_inv,
+
+            "W_ec":W_ec,
+            "L_ec":L_ec,
+            "t_ec_bt":t_ec_bt,
+            "t_ec":t_ec,
+            "t_ec_up":t_ec_up,
+            "k_ec":k_ec,
+            "H_ec":H_ec,
+
+            "r_cc":r_cc,
+    t_cc_bt = 4
+    t_cc_up = 4
+    t_cc = 4
+    H_cc = 200
+
+    k_ec_flange = 398
+    k_cc_flange = 16
+    t_ec_flange = 4
+    t_cc_flange = 4
+    l_flange = 58
+    w_flange = 100
+    n_flange = 4 
+
+    W_wick = 280
+    L_wick = 280
+    H_wick = 8
+    k_wick = 16
+    r_max_pore = 3 #unit micro meter enter radius! not diameter!!!
+    epsilon_wick = 0.6
+    contact_angle = 10 #deg
+    n_gr = 176
+    w_gr = 3
+    h_gr = 3
+    L_gr = 62
+
+    '''
+    W_wick_btm = 280
+    L_wick_btm = 280
+    H_wick_btm = 8          #=thickness mm include groove
+    k_wick_btm = 16         #[W/m-K]
+    r_max_pore_btm = 3      #[micro m] not diameter , enter radius
+    epsilon_wick_btm = 0.6  #[-]
+    K_wick_btm = 3.2e-13      #[m^2]
+    contact_angle_btm = 10  #[deg]
+    n_gr_btm = 176           #num of groove
+    w_gr_btm = 3
+    h_gr_btm = 3
+    L_gr_btm = 62 
+    
+    W_wick_up = 280
+    L_wick_up = 280
+    H_wick_up = 8          #=thickness mm include groove
+    k_wick_up = 16         #[W/m-K]
+    r_max_pore_up = 3      #[micro m] not diameter , enter radius
+    epsilon_wick_up = 0.6  #[-]
+    K_wick_up = 3.2e-13      #[m^2]
+    contact_angle_up = 10  #[deg]
+    n_gr_up = 176           #num of groove
+    w_gr_up = 3
+    h_gr_up = 3
+    L_gr_up = 62
+    '''
+    d_i_vl = 27.6
+    d_o_vl = 31.8
+    L_vl = 15           #[m]
+    t_insu_vl = 50      #thickness mm
+    k_vl = 16           #[W/m-K]
+    k_insu_vl = 0.004   #[W/m-K]
+
+    d_i_cl = 16.5
+    d_o_cl = 19.1
+    L_cl = 15           #[m]
+    k_cl = 16
+    k_insu_cl = 1000    #実際はinsuなし，計算の便宜を図るため導入
+
+    d_i_ll = 16.5
+    d_o_ll = 19.1
+    L_ll = 15           #[m]
+    t_insu_ll = 50      #thickness mm
+    k_ll = 16           #[W/m-K]
+    k_insu_ll = 0.004   #[W/m-K]
+
+    T_amb = 30      #[celsius temp]
+    T_sink = 30
+    alpha = 2500   #[W/m^2-K] 蒸発熱伝達率A_ecベースの値
+    h_hs_ec = 4000  #[W/m^2-K] 熱源-蒸発器熱伝達率
+    h_out = 20.0    #[W/m^2-K] 決め打ち外部への放熱伝達率
+    h_sink = 800.0  #[W/m^2-K] 決め打ち外部へのコンデンサ放熱伝達率
+    grav_ac = 9.8   #gravity_acceralation
+
+    num_cal_ec, num_cal_vl, num_cal_cl, num_cal_ll = 100, 200, 200, 200
+    #input zone end
+
+    #design para convert to SI unit
+    W_ec = W_ec*1e-3
+    L_ec = L_ec*1e-3
+    t_ec_bt = t_ec_bt*1e-3
+    t_ec = t_ec*1e-3
+    t_ec_up = t_ec_up*1e-3
+    H_ec = H_ec*1e-3
+    d_e_ec_w = 1.3* ((W_ec* H_ec)**0.625)/ ((W_ec+ H_ec)**0.25)
+    d_e_ec_l = 1.3* ((L_ec* H_ec)**0.625)/ ((L_ec+ H_ec)**0.25)
+    
+
+    r_cc = r_cc*1e-3
+    t_cc_bt = t_cc_bt*1e-3
+    t_cc_up = t_cc_up*1e-3
+    t_cc = t_cc*1e-3
+    H_cc = H_cc*1e-3
+    d_e_cc = 1.3* (((2* math.pi* r_cc)* H_cc)**0.625)/ (((2* math.pi* r_cc)+ H_cc)**0.25)
+    
+    t_ec_flange = t_ec_flange*1e-3
+    t_cc_flange = t_cc_flange*1e-3
+    l_flange = l_flange*1e-3
+    w_flange = w_flange*1e-3
+
+    W_wick = W_wick*1e-3
+    L_wick = L_wick*1e-3
+    H_wick = H_wick*1e-3
+
+    r_max_pore = r_max_pore*1e-6      #[micro m] not diameter , enter radius
+    contact_angle = math.radians(contact_angle)
+    w_gr = w_gr*1e-3
+    h_gr = h_gr*1e-3
+    L_gr = L_gr*1e-3
+    d_gr = (4* w_gr* h_gr)/ (2*w_gr+ 2*h_gr)
 
     }
 
