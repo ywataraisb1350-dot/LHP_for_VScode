@@ -27,12 +27,12 @@ def design():
     t_cc = 4
     H_cc = 200
 
-    k_ec_flange = 398
-    k_cc_flange = 16
-    t_ec_flange = 4
-    t_cc_flange = 4
+    k_flange = 16
+    t_flange = 4
     l_flange = 58
     w_flange = 100
+    w_flange_hole = 34
+    l_flange_hole = 16
     n_flange = 4
     w_ccpipe = 90
     l_ccpipe = 50
@@ -127,11 +127,14 @@ def design():
     H_cc = H_cc*1e-3
     d_e_cc = 1.3* (((2* math.pi* r_cc)* H_cc)**0.625)/ (((2* math.pi* r_cc)+ H_cc)**0.25)
     
-    t_ec_flange = t_ec_flange*1e-3
-    t_cc_flange = t_cc_flange*1e-3
+    t_flange = t_flange*1e-3
     l_flange = l_flange*1e-3
     w_flange = w_flange*1e-3
-    L_ccpipe = (w_ccpipe + l_ccpipe* 2)*1e-3
+    w_flange_hole = w_flange_hole*1e-3
+    l_flange_hole = l_flange_hole*1e-3
+    w_ccpipe = w_ccpipe*1e-3
+    l_ccpipe = l_ccpipe*1e-3
+    L_ccpipe = w_ccpipe+ 2* l_ccpipe
 
     W_wick = W_wick*1e-3
     L_wick = L_wick*1e-3
@@ -174,19 +177,22 @@ def design():
             "t_ec_up":t_ec_up,
             "k_ec":k_ec,
             "H_ec":H_ec,
+            "d_e_ec_w":d_e_ec_w,
+            "d_e_ec_l":d_e_ec_l,
 
             "r_cc":r_cc,
             "t_cc_bt":t_cc_bt,
             "t_cc":t_cc,
             "t_cc_up":t_cc_up,
             "H_cc":H_cc,
+            "d_e_cc":d_e_cc,
 
-            "k_ec_flange":k_ec_flange,
-            "k_cc_flange":k_cc_flange,
-            "t_ec_flange":t_ec_flange,
-            "t_cc_flange":t_cc_flange,
+            "k_flange":k_flange,
+            "t_flange":t_flange,
             "l_flange":l_flange,
             "w_flange":w_flange,
+            "l_flange_hole":l_flange_hole,
+            "w_flange_hole":w_flange_hole,
             "n_flange":n_flange,
             "w_ccpipe":w_ccpipe,
             "l_ccpipe":l_ccpipe,
@@ -205,6 +211,7 @@ def design():
             "w_gr":w_gr,
             "h_gr":h_gr,
             "L_gr":L_gr,
+            "d_gr":d_gr,
 
             "d_i_vl":d_i_vl,
             "d_o_vl":d_o_vl,
@@ -239,12 +246,7 @@ def design():
             "num_cal_ec":num_cal_ec,
             "num_cal_vl":num_cal_vl,
             "num_cal_cl":num_cal_cl,
-            "num_cal_ll":num_cal_ll,
-
-            "d_e_ec_w":d_e_ec_w,
-            "d_e_ec_l":d_e_ec_l,
-            "d_e_cc":d_e_cc,
-            "d_gr":d_gr
+            "num_cal_ll":num_cal_ll
     }
 
     return design_dict
@@ -281,6 +283,10 @@ def prop(csv_path, csv_path_inv):
     def P_sat(T):
         P_sat = prop_all(T, 'P_sat', all_funcs)
         return P_sat
+    
+    def T_sat(P):
+        T_sat = prop_all(P, 'T', all_funcs)
+        return T_sat
     
     def rho_l(T):
         rho_l = prop_all(T, 'rho_l', all_funcs)
@@ -455,6 +461,7 @@ def prop(csv_path, csv_path_inv):
     
     prop_dict = {
         "P_sat":P_sat,
+        "T_sat":T_sat,
         "rho_l":rho_l,
         "rho_g":rho_g,
         "Cp_l":Cp_l,
