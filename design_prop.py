@@ -30,10 +30,11 @@ def design():
     k_cc_flange = 16
     t_ec_flange = 4
     t_cc_flange = 4
-    n_flange = 4
+    n_flange = 4 
 
-    A_ec_btm_up = 20000 #mm^2 
+    
 
+    '''
     W_wick_btm = 280
     L_wick_btm = 280
     H_wick_btm = 8          #=thickness mm include groove
@@ -46,7 +47,7 @@ def design():
     w_gr_btm = 3
     h_gr_btm = 3
     L_gr_btm = 62 
-
+    
     W_wick_up = 280
     L_wick_up = 280
     H_wick_up = 8          #=thickness mm include groove
@@ -59,7 +60,7 @@ def design():
     w_gr_up = 3
     h_gr_up = 3
     L_gr_up = 62
-
+    '''
     d_i_vl = 27.6
     d_o_vl = 31.8
     L_vl = 15           #[m]
@@ -88,7 +89,7 @@ def design():
     h_sink = 800.0  #[W/m^2-K] 決め打ち外部へのコンデンサ放熱伝達率
     grav_ac = 9.8   #gravity_acceralation
 
-    num_cal_ec, num_cal_vl, num_cal_cl, num_cal_ll = 100, 100, 200, 100
+    num_cal_ec, num_cal_vl, num_cal_cl, num_cal_ll = 100, 200, 200, 200
     #input zone end
 
     #design para convert to SI unit
@@ -111,18 +112,15 @@ def design():
     w_kubire = w_kubire*1e-3
     l_kubire = l_kubire*1e-3
 
-    W_wick = 280
-    L_wick = 280
-    H_wick = 8
-    k_wick = 16         #[W/m-K]
-    r_max_pore = 3      #[micro m] not diameter , enter radius
-    epsilon_wick = 0.6  #[-]
-    K_wick = 3.2e-13      #[m^2]
-    contact_angle = 10  #[deg]
-    n_gr = 184           #num of groove
-    w_gr = 3
-    h_gr = 3
-    L_gr = 70 
+    W_wick = W_wick*1e-3
+    L_wick = L_wick*1e-3
+    H_wick = H_wick*1e-3
+
+    r_max_pore = r_max_pore*1e-6      #[micro m] not diameter , enter radius
+    contact_angle = math.radians(contact_angle)
+    w_gr = w_gr*1e-3
+    h_gr = h_gr*1e-3
+    L_gr = L_gr*1e-3
 
     d_i_vl = 27.6
     d_o_vl = 31.8
