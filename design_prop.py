@@ -77,6 +77,7 @@ def design():
     h_gr_up = 3
     L_gr_up = 62
     '''
+
     d_i_vl = 27.6
     d_o_vl = 31.8
     L_vl = 15           #[m]
@@ -147,6 +148,7 @@ def design():
     d_i_vl = d_i_vl*1e-3
     d_o_vl = d_o_vl*1e-3
     t_insu_vl = t_insu_vl*1e-3
+    d_o_insu_vl = d_o_vl+ 2* t_insu_vl
 
     d_i_cl = d_i_cl*1e-3
     d_o_cl = d_o_cl*1e-3
@@ -154,6 +156,7 @@ def design():
     d_i_ll = d_i_ll*1e-3
     d_o_ll = d_o_ll*1e-3
     t_insu_ll = t_insu_ll*1e-3
+    d_o_insu_ll = d_o_ll+ 2* t_insu_vl
 
     T_amb = T_amb + 273.15
     T_sink = T_sink + 273.15
@@ -203,40 +206,13 @@ def design():
             "h_gr":h_gr,
             "L_gr":L_gr,
 
-            '''
-            W_wick_btm = 280
-            L_wick_btm = 280
-            H_wick_btm = 8          #=thickness mm include groove
-            k_wick_btm = 16         #[W/m-K]
-            r_max_pore_btm = 3      #[micro m] not diameter , enter radius
-            epsilon_wick_btm = 0.6  #[-]
-            K_wick_btm = 3.2e-13      #[m^2]
-            contact_angle_btm = 10  #[deg]
-            n_gr_btm = 176           #num of groove
-            w_gr_btm = 3
-            h_gr_btm = 3
-            L_gr_btm = 62 
-    
-            W_wick_up = 280
-            L_wick_up = 280
-            H_wick_up = 8          #=thickness mm include groove
-            k_wick_up = 16         #[W/m-K]
-            r_max_pore_up = 3      #[micro m] not diameter , enter radius
-            epsilon_wick_up = 0.6  #[-]
-            K_wick_up = 3.2e-13      #[m^2]
-            contact_angle_up = 10  #[deg]
-            n_gr_up = 176           #num of groove
-            w_gr_up = 3
-            h_gr_up = 3
-            L_gr_up = 62
-            '''
-
             "d_i_vl":d_i_vl,
             "d_o_vl":d_o_vl,
             "L_vl":L_vl,
             "t_insu_vl":t_insu_vl,
             "k_vl":k_vl,
             "k_insu_vl":k_insu_vl,
+            "d_o_insu_vl":d_o_insu_vl,
 
             "d_i_cl":d_i_cl,
             "d_o_cl":d_o_cl,
@@ -250,6 +226,7 @@ def design():
             "t_insu_ll":t_insu_ll,
             "k_ll":k_ll,
             "k_insu_ll":k_insu_ll,
+            "d_o_insu_ll":d_o_insu_ll,
 
             "T_amb":T_amb,
             "T_sink":T_sink,
