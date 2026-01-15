@@ -313,31 +313,31 @@ def prop(csv_path, csv_path_inv):
         return rho_g
     
     def Cp_l(T):
-        Cp_l = prop(T, 'Cp_l', all_funcs)
+        Cp_l = prop_all(T, 'Cp_l', all_funcs)
         return Cp_l
 
     def Cp_g(T):
-        Cp_g = prop(T, 'Cp_g', all_funcs)
+        Cp_g = prop_all(T, 'Cp_g', all_funcs)
         return Cp_g
 
     def lambda_lv(T):
-        lambda_lv = prop(T, 'lambda', all_funcs)
+        lambda_lv = prop_all(T, 'lambda', all_funcs)
         return lambda_lv
 
     def k_l(T):
-        k_l = prop(T, 'k_l', all_funcs)
+        k_l = prop_all(T, 'k_l', all_funcs)
         return k_l
 
     def k_g(T):
-        k_g = prop(T, 'k_g', all_funcs)
+        k_g = prop_all(T, 'k_g', all_funcs)
         return k_g
 
     def mu_l(T):
-        mu_l = prop(T, 'mu_l', all_funcs)
+        mu_l = prop_all(T, 'mu_l', all_funcs)
         return mu_l
 
     def mu_g(T):
-        mu_g = prop(T, 'mu_g', all_funcs)
+        mu_g = prop_all(T, 'mu_g', all_funcs)
         return mu_g
 
     def Pr_l(T):
@@ -357,7 +357,7 @@ def prop(csv_path, csv_path_inv):
         return nu_g
 
     def sigma(T):
-        sigma = 0.06195* (1-(T/438.75))**1.277
+        sigma = 0.06195* (1-(T/438.75))**1.277 #R1233zdEのみ，他の流体は別の実験式などが必要
         return sigma
 
     def Re_l(u, T, d):
@@ -480,7 +480,7 @@ def prop(csv_path, csv_path_inv):
         "rho_g":rho_g,
         "Cp_l":Cp_l,
         "Cp_g":Cp_g,
-        "lambda":lambda_lv,
+        "lambda_lv":lambda_lv,
         "k_l":k_l,
         "k_g":k_g,
         "mu_l":mu_l,
