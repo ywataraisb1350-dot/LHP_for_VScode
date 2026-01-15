@@ -30,9 +30,21 @@ def design():
     k_cc_flange = 16
     t_ec_flange = 4
     t_cc_flange = 4
+    l_flange = 58
+    w_flange = 100
     n_flange = 4 
 
-    
+    W_wick = 280
+    L_wick = 280
+    H_wick = 8
+    k_wick = 16
+    r_max_pore = 3 #unit micro meter enter radius! not diameter!!!
+    epsilon_wick = 0.6
+    contact_angle = 10 #deg
+    n_gr = 176
+    w_gr = 3
+    h_gr = 3
+    L_gr = 62
 
     '''
     W_wick_btm = 280
@@ -99,12 +111,16 @@ def design():
     t_ec = t_ec*1e-3
     t_ec_up = t_ec_up*1e-3
     H_ec = H_ec*1e-3
+    d_e_ec_w = 1.3* ((W_ec* H_ec)**0.625)/ ((W_ec+ H_ec)**0.25)
+    d_e_ec_l = 1.3* ((L_ec* H_ec)**0.625)/ ((L_ec+ H_ec)**0.25)
+    
 
     r_cc = r_cc*1e-3
     t_cc_bt = t_cc_bt*1e-3
-    t_cc_up = t_ec_up*1e-3
+    t_cc_up = t_cc_up*1e-3
     t_cc = t_cc*1e-3
     H_cc = H_cc*1e-3
+    d_e_cc = 1.3* (((2* math.pi* r_cc)* H_cc)**0.625)/ (((2* math.pi* r_cc)+ H_cc)**0.25)
 
     t_ec_flange = t_ec_flange*1e-3
     t_cc_flange = t_cc_flange*1e-3
@@ -121,29 +137,21 @@ def design():
     w_gr = w_gr*1e-3
     h_gr = h_gr*1e-3
     L_gr = L_gr*1e-3
+    d_gr = (4* w_gr* h_gr)/ (2*w_gr+ 2*h_gr)
 
-    d_i_vl = 27.6
-    d_o_vl = 31.8
-    L_vl = 15           #[m]
-    t_insu_vl = 50      #thickness mm
-    k_vl = 16           #[W/m-K]
-    k_insu_vl = 0.004   #[W/m-K]
+    d_i_vl = d_i_vl*1e-3
+    d_o_vl = d_o_vl*1e-3
+    t_insu_vl = t_insu_vl*1e-3
 
-    d_i_cl = 16.5
-    d_o_cl = 19.1
-    L_cl = 15           #[m]
-    k_cl = 16
-    k_insu_cl = 1000    #実際はinsuなし，計算の便宜を図るため導入
+    d_i_cl = d_i_cl*1e-3
+    d_o_cl = d_o_cl*1e-3
 
-    d_i_ll = 16.5
-    d_o_ll = 19.1
-    L_ll = 15           #[m]
-    t_insu_ll = 50      #thickness mm
-    k_ll = 16           #[W/m-K]
-    k_insu_ll = 0.004   #[W/m-K]
+    d_i_ll = d_i_ll*1e-3
+    d_o_ll = d_o_ll*1e-3
+    t_insu_ll = t_insu_ll*1e-3
 
-    T_amb = 30      #[celsius temp]
-    T_sink = 30
+    T_amb = T_amb + 273.15
+    T_sink = T_sink + 273.15
 
     design_dict = {
            "W_ec":W_ec,
