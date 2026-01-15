@@ -134,6 +134,7 @@ def design():
     W_wick = W_wick*1e-3
     L_wick = L_wick*1e-3
     H_wick = H_wick*1e-3
+    A_wick = W_wick* L_wick
 
     r_max_pore = r_max_pore*1e-6      #[micro m] not diameter , enter radius
     contact_angle = math.radians(contact_angle)
@@ -190,6 +191,7 @@ def design():
             "W_wick":W_wick,
             "L_wick":L_wick,
             "H_wick":H_wick,
+            "A_wick":A_wick,
             "k_wick":k_wick,
             "r_max_pore":r_max_pore,
             "epsilon_wick":epsilon_wick,

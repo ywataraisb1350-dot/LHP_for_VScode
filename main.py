@@ -8,6 +8,7 @@ from scipy.interpolate import interp1d
 from datetime import datetime
 
 import design_prop
+import ec_flat
 
 design_dict = design_prop.design()
 d = types.SimpleNamespace(**design_dict)
@@ -18,3 +19,5 @@ T=350
 P_sat=p.P_sat(T)
 print(P_sat)
 
+P,T, df_ec, M_dot, Qev, Qgr, Ploss = ec_flat.ec_flat(340, 330)
+print(P,T,Qev,Qgr,Ploss)
