@@ -11,6 +11,36 @@ import design_prop
 import ec_flat
 import transline
 
+epsilon = 1e-6
+random_start_Tev_min, random_start_Tev_max = 42.09660727333085 +273.15, 42.09660727333085 +273.15000000001
+random_start_deltat_min, random_start_deltat_max =(47.676987038329-42.09660727333085), (47.676987038329-42.0966072733308)
+max_restarts = 100
+iterations = 30000
+learning_ratio = 2e-2
+grad_clip_threshold = 50000
+learning_rate_adam = 0.02 # 固定学習率より少し大きめに設定できることが多い
+beta1 = 0.9
+beta2 = 0.9
+epsilon_adam = 1e-5
+m_t = np.zeros(2) # モーメントベクトル
+v_t = np.zeros(2)
+
+dict_cal_parameter = {
+    "epsilon":epsilon,
+    "random_start_Tev_min":random_start_Tev_min,
+    "random_start_Tev_max":random_start_Tev_max,
+    "random_start_deltaT_min":random_start_deltat_min,
+    "random_start_deltaT_max":random_start_deltat_max,
+    "max_restarts":max_restarts,
+    "iterations":iterations,
+    "learning_ratio":learning_ratio,
+    "grad_clip_threshold":grad_clip_threshold,
+    "learning_rate_adam":learning_rate_adam,
+    "beta1":beta1,
+    "beta2":beta2,
+    "epsilon_adam":epsilon_adam
+}
+
 design_dict = design_prop.design()
 d = types.SimpleNamespace(**design_dict)
 prop_dict = design_prop.prop(d.csv_path, d.csv_path_inv)
@@ -19,6 +49,7 @@ p = types.SimpleNamespace(**prop_dict)
 def eval_func(Tec, Tev):
 
     P, T, df_ec, M_dot, Q_ev, Q_gr, P_loss_gr, P_loss_wick_flat, P_loss_wick_gr, P_cap = ec_flat.ec_flat(Tec, Tev)
+    P_loss_wick = P_loss_wick_flat+ P_loss_wick_gr
 
     rho = p.rho_g(P,T)
     x, phase = 1, 'gas'
@@ -54,4 +85,29 @@ def eval_func(Tec, Tev):
     Q_ccc_ccin = G_ccc_ccin(T_ccin)* (T_ccc-T_ccin)
     eval_cc = (100*(Q_ccc_ccin+ Q_ec_wick_ccin- Q_cc_ll)/ (d.Q_load))**2
 
-    return eval_ec+eval_cc
+    result_dict={
+        "Tec":Tec,
+        "Tev":Tev,
+        "T_ini_vl":T_ini_vl,
+        "T_ave_vl":T_ave_vl,
+        "T_ini_cl":T_ini_cl,
+        "T_ave_cl":T_ave_cl,
+        "T_ini_ll":T_ini_ll,
+        "T_ave_ll":T_ave_ll,
+        "T_ccin":T_ccin,
+        "T_ccc":T_ccc,
+        "T_hs":T_hs,
+        "Q_ev":Q_ev,
+        "Q_gr":Q_gr,
+        "Q_ec_wick_ccin":Q_ec_wick_ccin,
+        "Q_ec_ccc":Q_ec_ccc,
+        "Q_ec_amb":Q_ec_amb,
+        #"Q_hs_amb"
+        "Q_cc_ll":Q_cc_ll,
+        "Q_ccc_ccin":Q_ccc_ccin,
+        "eval_ec[%]":math.sqrt(eval_ec),
+        "eval_cc[%]":math.sqrt(eval_cc)
+    }
+
+    return eval_ec+eval_cc, df_ec, df_vl, df_cl, df_ll, 
+
