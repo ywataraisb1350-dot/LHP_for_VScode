@@ -74,5 +74,4 @@ def ec_flat(Tec, Tev):
         ec_result.append(current_data)
     df_ec = pd.DataFrame(ec_result)
 
-
     return P, T, df_ec, M_dot, Q_ev, Q_gr, P_loss_gr
