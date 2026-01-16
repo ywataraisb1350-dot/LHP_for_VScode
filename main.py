@@ -203,7 +203,7 @@ for j in range(1,7):
     (eval_val, df_ec, df_vl, df_cl, df_ll, T_hs, Tec, T_ave_cl, P_cap, P_loss_wick, 
      P_loss_gr, P_loss_vl, P_loss_cl, P_loss_ll, result_dict) = eval_func(global_min_val[0], global_min_val[1], Q_load)
     
-    status_str = "convergence-True" if convergence else "convergence-False"
+    status_str = "True" if convergence else "False"
     sub_dir_name = f"{timestamp}_{Q_load}W"
     sub_dir = os.path.join(timestamp, sub_dir_name)
     os.makedirs(sub_dir, exist_ok=True)
