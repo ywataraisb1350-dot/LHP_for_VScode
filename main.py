@@ -66,7 +66,7 @@ def eval_func(Tec, Tev, Q_load):
         u, P, T, rho, x, phase, M_dot, d.L_ll, d.d_i_ll, d.d_o_ll, d.d_o_insu_ll, d.k_ll, d.k_insu_ll, d.h_out, d.T_amb, d.num_cal_ll)
     
     T_ccin = p.T_sat(P)
-    G_ec_ccc = d.k_flange* (d.w_flange* d.l_flange- d.w_flange_hole- d.l_flange_hole)/ d.L_ccpipe
+    G_ec_ccc = d.k_flange* (d.w_flange* d.l_flange- d.w_flange_hole* d.l_flange_hole)/ d.L_ccpipe
     G_ccc_ccin = 4.36* p.k_l(T_ccin)* (2* math.pi* d.r_cc* d.H_cc)/ d.d_e_cc + 4.36* p.k_l(T_ccin)* math.pi* d.r_cc* 0.25
 
     T_ccc =( (G_ccc_ccin* T_ccin + d.h_out* (math.pi* d.r_cc**2 *  0.25+ 2* math.pi* d.r_cc* d.H_cc)* d.T_amb + G_ec_ccc* Tec)/
@@ -221,14 +221,15 @@ for j in range(1,7):
     
     key_result_dict = {
         "Q_load":Q_load,
-        "HS":T_hs,
-        "EC":Tec,
-        "CL ave.":T_ave_cl,
+        "HS":T_hs-273.15,
+        "EC":Tec-273.15,
+        "CL ave.":T_ave_cl-273.15,
         "wick":P_loss_wick,
         "groove":P_loss_gr,
         "VL":P_loss_vl,
         "CL":P_loss_cl,
         "LL":P_loss_ll,
+        "Cap.":P_cap,
         "converg_judge":convergence
         }
     
