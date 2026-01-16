@@ -165,7 +165,6 @@ def design():
     T_sink = T_sink + 273.15
 
     design_dict = {
-            "Q_load":Q_load,
             "A_hs":A_hs,
             "csv_path":csv_path,
             "csv_path_inv":csv_path_inv,
