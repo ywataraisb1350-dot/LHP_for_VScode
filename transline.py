@@ -84,7 +84,6 @@ def trans_line(u, P, T, rho, x, phase, M_dot, L, d_i, d_o, d_o_insu, k, k_insu, 
     result.append(current_data)
     
     for i in range(num_cal+ 1):
-        print('u=',u,'P=',P,'T=',T,'x=',x)
         
         if phase=='gas':
             G_gas_val, G_in, G_pipe, R_insu, G_ex = G_gas(u, P, T, Delta_L, d_i, d_o, d_o_insu, k, k_insu, h_ex, T_ex)
