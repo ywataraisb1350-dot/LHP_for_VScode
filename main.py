@@ -108,8 +108,8 @@ def eval_func(Tec, Tev, Q_load):
         #"Q_hs_amb"
         "Q_cc_ll":Q_cc_ll,
         "Q_ccc_ccin":Q_ccc_ccin,
-        "eval_ec[%]":eval_ec,
-        "eval_cc[%]":eval_cc,
+        "eval_ec[%]":math.sqrt(eval_ec),
+        "eval_cc[%]":math.sqrt(eval_cc),
         
         "P_cap.":P_cap,
         "P_loss_wick":P_loss_wick,
