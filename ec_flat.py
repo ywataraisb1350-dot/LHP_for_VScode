@@ -42,8 +42,7 @@ def ec_flat(Tec, Tev):
     ec_result.append(current_data)
     
     for i in range(d.num_cal_ec+ 1):
-        #print('u=',u, 'P=',P, 'T=',T, 'd_gr',d.d_gr, 'Re=',p.Re_g(u, P, T, d.d_gr))
-        #print(f"\n{i+1}kaime")
+        print('u=',u, 'P=',P, 'T=',T, 'd_gr',d.d_gr, 'Re=',p.Re_g(u, P, T, d.d_gr), 'i',i)
         
         T_next = ( (p.h_g(u, P, T, d.d_gr)*(Delta_L* d.w_gr+ 2* Delta_L* d.h_gr)*(Tec- Tev)
              + (M_dot*i*Delta_L* p.Cp_g(T)* T/ (d.n_gr* d.L_wick))+ (M_dot*Delta_L* p.Cp_g(Tev)* Tev/ (d.n_gr* d.L_wick)))
@@ -78,7 +77,7 @@ def ec_flat(Tec, Tev):
     df_ec = pd.DataFrame(ec_result)
 
     P_cap = 2*p.sigma(Tev)* math.cos(d.contact_angle)/d.r_max_pore
-    P_loss_wick_flat = p.mu_l(Tev)* (d.H_wick- d.h_gr) * M_dot/(d.K_wick* d.A_wick* p.rho_l(Tev)) #
+    P_loss_wick_flat = p.mu_l(Tev)* (d.H_wick- d.h_gr) * M_dot/(d.K_wick* d.A_wick* p.rho_l(Tev))
     P_loss_wick_gr = p.mu_l(Tev)* d.h_gr* M_dot/(d.K_wick* (d.A_wick- d.w_gr* d.L_gr* d.n_gr) * p.rho_l(Tev))
 
     return P, T, df_ec, M_dot, Q_ev, Q_gr, P_loss_gr, P_loss_wick_flat, P_loss_wick_gr, P_cap

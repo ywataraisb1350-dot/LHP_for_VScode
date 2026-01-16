@@ -84,6 +84,7 @@ def trans_line(u, P, T, rho, x, phase, M_dot, L, d_i, d_o, d_o_insu, k, k_insu, 
     result.append(current_data)
     
     for i in range(num_cal+ 1):
+        print('u=',u,'P=',P,'T=',T,'x=',x)
         
         if phase=='gas':
             G_gas_val, G_in, G_pipe, R_insu, G_ex = G_gas(u, P, T, Delta_L, d_i, d_o, d_o_insu, k, k_insu, h_ex, T_ex)
@@ -141,7 +142,7 @@ def trans_line(u, P, T, rho, x, phase, M_dot, L, d_i, d_o, d_o_insu, k, k_insu, 
             '''
             
             P_next = P- Delta_P_2p_val
-            T_next = p.P_sat(T)
+            T_next = p.T_sat(P)
             G = G_mix_val
             x = x+ (x* p.Cp_g(T)+ (1-x)* p.Cp_l(T))* (T- T_next)/ p.lambda_lv(T)- G* (T- T_ex)/ (M_dot* p.lambda_lv(T))
             if x>0.999999999:

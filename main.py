@@ -127,6 +127,7 @@ now = datetime.now()
 timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
 os.makedirs(timestamp, exist_ok=True)
 
+'''
 for j in range(1,7):
     global_min_val = [None, None, float('inf')]
     convergence = False
@@ -239,3 +240,8 @@ df_keyres.to_csv(file_path_res, index=False)
 df_cal_para = pd.DataFrame(dict_cal_parameter)
 file_path_cal_para = os.path.join(timestamp, f'cal_para_{timestamp}.csv')
 df_cal_para.to_csv(file_path_res, index=False)
+'''
+Q_load,Tec,Tev = 6000,63+273,43+273
+(eval_val, df_ec, df_vl, df_cl, df_ll, 
+            T_hs, Tec, T_ave_cl, P_cap, P_loss_wick, P_loss_gr, P_loss_vl, P_loss_cl, P_loss_ll, result_dict)=eval_func(Tec,Tev,Q_load)
+print(eval_val)
