@@ -13,16 +13,16 @@ import ec_flat
 import transline
 
 epsilon = 1e-6
-random_start_Tev_min, random_start_Tev_max = 42.09660727333085 +273.15, 42.09660727333085 +273.15000000001
-random_start_deltat_min, random_start_deltat_max =(47.676987038329-42.09660727333085), (47.676987038329-42.0966072733308)
+random_start_Tev_min, random_start_Tev_max = 40+273.15, 50.09660727333085 +273.15000000001
+random_start_deltat_min, random_start_deltat_max =(47.676987038329-42.09660727333085), (70.676987038329-42.0966072733308)
 max_restarts = 100
 iterations = 30000
 learning_ratio = 2e-2
 grad_clip_threshold = 50000
-learning_rate_adam = 0.02 # 固定学習率より少し大きめに設定できることが多い
+learning_rate_adam = 0.2 # 固定学習率より少し大きめに設定できることが多い
 beta1 = 0.9
 beta2 = 0.9
-epsilon_adam = 1e-5
+epsilon_adam = 0.1
 m_t = np.zeros(2) # モーメントベクトル
 v_t = np.zeros(2)
 
@@ -121,6 +121,11 @@ def eval_func(Tec, Tev, Q_load):
 
     return (eval_ec+eval_cc, df_ec, df_vl, df_cl, df_ll, 
             T_hs, Tec, T_ave_cl, P_cap, P_loss_wick, P_loss_gr, P_loss_vl, P_loss_cl, P_loss_ll, result_dict)
+    
+key_result = []
+now = datetime.now()
+timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
+os.makedirs(timestamp, exist_ok=True)
 
 for j in range(1,7):
     global_min_val = [None, None, float('inf')]
@@ -197,19 +202,40 @@ for j in range(1,7):
     (eval_val, df_ec, df_vl, df_cl, df_ll, T_hs, Tec, T_ave_cl, P_cap, P_loss_wick, 
      P_loss_gr, P_loss_vl, P_loss_cl, P_loss_ll, result_dict) = eval_func(global_min_val[0], global_min_val[1], Q_load)
     
-    now = datetime.now()
-    timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
     status_str = "convergence-True" if convergence else "convergence-False"
-    save_dir = f"{timestamp}_{Q_load}W"
-    os.makedirs(save_dir, exist_ok=True)
-    file_path_ec = os.path.join(save_dir, f'ec_{timestamp}_{Q_load}W_{status_str}.csv')
+    sub_dir_name = f"{timestamp}_{Q_load}W"
+    sub_dir = os.path.join(timestamp, sub_dir_name)
+    file_path_ec = os.path.join(sub_dir, f'ec_{timestamp}_{Q_load}W_{status_str}.csv')
     df_ec.to_csv(file_path_ec, index=False)
-    file_path_vl = os.path.join(save_dir, f'vl_{timestamp}_{Q_load}W_{status_str}.csv')
+    file_path_vl = os.path.join(sub_dir, f'vl_{timestamp}_{Q_load}W_{status_str}.csv')
     df_vl.to_csv(file_path_vl, index=False)
-    file_path_cl = os.path.join(save_dir, f'cl_{timestamp}_{Q_load}W_{status_str}.csv')
+    file_path_cl = os.path.join(sub_dir, f'cl_{timestamp}_{Q_load}W_{status_str}.csv')
     df_cl.to_csv(file_path_cl, index=False)
-    file_path_ll = os.path.join(save_dir, f'll_{timestamp}_{Q_load}W_{status_str}.csv')
+    file_path_ll = os.path.join(sub_dir, f'll_{timestamp}_{Q_load}W_{status_str}.csv')
     df_ll.to_csv(file_path_ll, index=False)
     df_res = pd.DataFrame(result_dict.items(), columns=['lavel', 'val'])
     file_path_res = os.path.join(timestamp, f'result_{timestamp}_{Q_load}W_{status_str}.csv')
     df_res.to_csv(file_path_res, index=False)
+    
+    key_result_dict = {
+        "Q_load":Q_load,
+        "HS":T_hs,
+        "EC":Tec,
+        "CL ave.":T_ave_cl,
+        "wick":P_loss_wick,
+        "groove":P_loss_gr,
+        "VL":P_loss_vl,
+        "CL":P_loss_cl,
+        "LL":P_loss_ll,
+        "converg_judge":convergence
+        }
+    
+    key_result.append(key_result_dict)
+    
+df_keyres = pd.DataFrame(key_result)
+file_path_keyres = os.path.join(timestamp, f'KEYresult_{timestamp}.csv')
+df_keyres.to_csv(file_path_res, index=False)
+
+df_cal_para = pd.DataFrame(dict_cal_parameter)
+file_path_cal_para = os.path.join(timestamp, f'cal_para_{timestamp}.csv')
+df_cal_para.to_csv(file_path_res, index=False)
