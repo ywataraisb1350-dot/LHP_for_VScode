@@ -60,13 +60,13 @@ def eval_func(Tec, Tev, Q_load):
         u, P, T, rho, x, phase, M_dot, d.L_vl, d.d_i_vl, d.d_o_vl, d.d_o_insu_vl, d.k_vl, d.k_insu_vl, d.h_out, d.T_amb, d.num_cal_vl)
 
     u, P, T, rho, x, phase, df_cl, P_loss_cl, T_ave_cl, T_ini_cl = transline.trans_line(
-        u, P, T, rho, x, phase, M_dot/2, d.L_cl, d.d_i_cl, d.d_o_cl, d.d_o_insu_cl, d.k_cl, d.k_insu_cl, d.h_sink, d.T_sink, d.num_cal_cl)
+        u, P, T, rho, x, phase, M_dot/2, d.L_cl, d.d_i_cl, d.d_o_cl, d.d_o_cl, d.k_cl, d.k_insu_cl, d.h_sink, d.T_sink, d.num_cal_cl)
 
     u, P, T, rho, x, phase, df_ll, P_loss_ll, T_ave_ll, T_ini_ll = transline.trans_line(
         u, P, T, rho, x, phase, M_dot, d.L_ll, d.d_i_ll, d.d_o_ll, d.d_o_insu_ll, d.k_ll, d.k_insu_ll, d.h_out, d.T_amb, d.num_cal_ll)
     
     T_ccin = p.T_sat(P)
-    G_ec_ccc = d.k_cc_flange* (d.w_flange* d.l_flange- d.w_flange_hole- d.l_flange_hole)/ d.L_ccpipe
+    G_ec_ccc = d.k_flange* (d.w_flange* d.l_flange- d.w_flange_hole- d.l_flange_hole)/ d.L_ccpipe
     G_ccc_ccin = 4.36* p.k_l(T_ccin)* (2* math.pi* d.r_cc* d.H_cc)/ d.d_e_cc + 4.36* p.k_l(T_ccin)* math.pi* d.r_cc* 0.25
 
     T_ccc =( (G_ccc_ccin* T_ccin + d.h_out* (math.pi* d.r_cc**2 *  0.25+ 2* math.pi* d.r_cc* d.H_cc)* d.T_amb + G_ec_ccc* Tec)/
@@ -83,7 +83,7 @@ def eval_func(Tec, Tev, Q_load):
     eval_ec = (100*(Q_ec_in- Q_ec_out)/ Q_load)**2
   
     Q_cc_ll = M_dot* p.Cp_l(T)* (T_ccin- T)
-    Q_ccc_ccin = G_ccc_ccin(T_ccin)* (T_ccc-T_ccin)
+    Q_ccc_ccin = G_ccc_ccin* (T_ccc-T_ccin)
     eval_cc = (100*(Q_ccc_ccin+ Q_ec_wick_ccin- Q_cc_ll)/ (Q_load))**2
 
     result_dict={
@@ -108,8 +108,8 @@ def eval_func(Tec, Tev, Q_load):
         #"Q_hs_amb"
         "Q_cc_ll":Q_cc_ll,
         "Q_ccc_ccin":Q_ccc_ccin,
-        "eval_ec[%]":math.sqrt(eval_ec),
-        "eval_cc[%]":math.sqrt(eval_cc),
+        "eval_ec[%]":eval_ec,
+        "eval_cc[%]":eval_cc,
         
         "P_cap.":P_cap,
         "P_loss_wick":P_loss_wick,

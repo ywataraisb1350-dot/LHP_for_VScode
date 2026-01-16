@@ -284,7 +284,7 @@ def prop(csv_path, csv_path_inv):
         return P_sat
     
     def T_sat(P):
-        T_sat = prop_all(P, 'T', all_funcs)
+        T_sat = prop_all(P, 'T', sat_inv)
         return T_sat
     
     def rho_l(T):
@@ -414,9 +414,9 @@ def prop(csv_path, csv_path_inv):
         
         return tau_g
     
-    def Delta_P_2p(u, T, d, x, m_dot, Delta_L):
-        Re_g_sat = u*d*x*     prop(T,'rho_g',all_funcs)/prop(T,'mu_g',all_funcs)
-        Re_l_sat = u*d*(1-x)* prop(T,'rho_l',all_funcs)/prop(T,'mu_l',all_funcs)
+    def Delta_P_2p(u, T, d, x, m_dot, Delta_L, P):
+        Re_g_sat = u*d*x*     rho_g(P,T)/mu_g(T)
+        Re_l_sat = u*d*(1-x)* rho_l(T)/mu_l(T)
     
         def f(Re):
             if 0 <= Re <= 0.01:
@@ -445,8 +445,8 @@ def prop(csv_path, csv_path_inv):
     
         C_res = C(Re_g_sat, Re_l_sat)
     
-        Delta_P_g = 8*f(Re_g_sat)*(m_dot**2 * x**2)*Delta_L/(prop(T,'rho_g', all_funcs)*math.pi**2 * d**5)
-        Delta_P_l = 8*f(Re_l_sat)*(m_dot**2 * (1-x)**2)*Delta_L/(prop(T,'rho_l', all_funcs)*math.pi**2 * d**5)
+        Delta_P_g = 8*f(Re_g_sat)*(m_dot**2 * x**2)*Delta_L/ (rho_g(P,T)*math.pi**2 * d**5)
+        Delta_P_l = 8*f(Re_l_sat)*(m_dot**2 * (1-x)**2)*Delta_L/(rho_l(T)*math.pi**2 * d**5)
     
         if Delta_P_g > 1e-7:
             X_LM = math.sqrt(Delta_P_l/Delta_P_g)

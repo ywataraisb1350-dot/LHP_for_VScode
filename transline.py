@@ -125,7 +125,7 @@ def trans_line(u, P, T, rho, x, phase, M_dot, L, d_i, d_o, d_o_insu, k, k_insu, 
             
         elif phase=='mix':
             
-            Delta_P_2p_val, C, X_LM = p.Delta_P_2p(u, d_i, T, x, M_dot, Delta_L)
+            Delta_P_2p_val, C, X_LM = p.Delta_P_2p(u, T, d_i, x, M_dot, Delta_L, P)
             if X_LM<1e-3:
                 X_LM = 1e-3
             G_mix_val, G_in, G_pipe, R_insu, G_ex, h_in = G_mix(u, P, T, Delta_L, d_i, d_o, d_o_insu, k, k_insu, h_ex, T_ex, M_dot, x, X_LM)
@@ -149,14 +149,14 @@ def trans_line(u, P, T, rho, x, phase, M_dot, L, d_i, d_o, d_o_insu, k, k_insu, 
                 
             elif x <= 1e-6:
                 phase, x = 'liq', 0
-            u = max([ (M_dot* x/ (p.rho_g(T_next)* math.pi* 0.25* d_i**2) ), ( M_dot/ (p.rho_l(T_next)* math.pi* 0.25* d_i**2) ) ])
+            u = max([ (M_dot* x/ (p.rho_g(P_next, T_next)* math.pi* 0.25* d_i**2) ), ( M_dot/ (p.rho_l(T_next)* math.pi* 0.25* d_i**2) ) ])
             
             P_loss_mix = P_loss_mix + (P- P_next)
             P_loss_all_phase = P_loss_all_phase+ (P- P_next)
             Q_release_mix = Q_release_mix + G_mix_val* (T- T_ex)
             Delta_T = T- T_next
             P, T = P_next, T_next
-            rho = p.rho_g(T) #prop(T, 'rho_g', all_funcs)
+            rho = p.rho_g(P, T) #prop(T, 'rho_g', all_funcs)
             
             current_data = {
             'step': i,
@@ -167,7 +167,7 @@ def trans_line(u, P, T, rho, x, phase, M_dot, L, d_i, d_o, d_o_insu, k, k_insu, 
             'rho': '-',
             'phase':phase,
             'x':x,
-            'm_dot':x*u*p.rho_g(T)*math.pi*0.25*d_i**2,
+            'm_dot':x*u*p.rho_g(P,T)*math.pi*0.25*d_i**2,
             "h_in":h_in,
             'P_loss_mix':P_loss_mix,
             'LM_C':C,
