@@ -206,6 +206,7 @@ for j in range(1,7):
     status_str = "convergence-True" if convergence else "convergence-False"
     sub_dir_name = f"{timestamp}_{Q_load}W"
     sub_dir = os.path.join(timestamp, sub_dir_name)
+    os.makedirs(sub_dir, exist_ok=True)
     file_path_ec = os.path.join(sub_dir, f'ec_{timestamp}_{Q_load}W_{status_str}.csv')
     df_ec.to_csv(file_path_ec, index=False)
     file_path_vl = os.path.join(sub_dir, f'vl_{timestamp}_{Q_load}W_{status_str}.csv')
@@ -235,13 +236,8 @@ for j in range(1,7):
     
 df_keyres = pd.DataFrame(key_result)
 file_path_keyres = os.path.join(timestamp, f'KEYresult_{timestamp}.csv')
-df_keyres.to_csv(file_path_res, index=False)
+df_keyres.to_csv(file_path_keyres, index=False)
 
 df_cal_para = pd.DataFrame(dict_cal_parameter)
 file_path_cal_para = os.path.join(timestamp, f'cal_para_{timestamp}.csv')
-df_cal_para.to_csv(file_path_res, index=False)
-
-Q_load,Tec,Tev = 6000,63+273,43+273
-(eval_val, df_ec, df_vl, df_cl, df_ll, 
-            T_hs, Tec, T_ave_cl, P_cap, P_loss_wick, P_loss_gr, P_loss_vl, P_loss_cl, P_loss_ll, result_dict)=eval_func(Tec,Tev,Q_load)
-print(eval_val)
+df_cal_para.to_csv(file_path_cal_para, index=False)
