@@ -216,7 +216,7 @@ for j in range(1,7):
     file_path_ll = os.path.join(sub_dir, f'll_{timestamp}_{Q_load}W_{status_str}.csv')
     df_ll.to_csv(file_path_ll, index=False)
     df_res = pd.DataFrame(result_dict.items(), columns=['lavel', 'val'])
-    file_path_res = os.path.join(timestamp, f'result_{timestamp}_{Q_load}W_{status_str}.csv')
+    file_path_res = os.path.join(sub_dir, f'result_{timestamp}_{Q_load}W_{status_str}.csv')
     df_res.to_csv(file_path_res, index=False)
     
     key_result_dict = {
@@ -238,6 +238,6 @@ df_keyres = pd.DataFrame(key_result)
 file_path_keyres = os.path.join(timestamp, f'KEYresult_{timestamp}.csv')
 df_keyres.to_csv(file_path_keyres, index=False)
 
-df_cal_para = pd.DataFrame(dict_cal_parameter)
+df_cal_para = pd.DataFrame(list(dict_cal_parameter.items()), columns=['parameter', 'value'])
 file_path_cal_para = os.path.join(timestamp, f'cal_para_{timestamp}.csv')
 df_cal_para.to_csv(file_path_cal_para, index=False)
