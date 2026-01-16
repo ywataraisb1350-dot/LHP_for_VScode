@@ -22,6 +22,7 @@ def ec_flat(Tec, Tev):
     
     Q_gr, P_loss_gr = 0, 0
     u, P, T = 0, p.P_sat(Tev), Tev
+    #print('u=',u, 'P=',P, 'T=',T, 'd_gr',d.d_gr, 'Re=',p.Re_g(u, P, T, d.d_gr))
     ec_result = []
     current_data = {
             'step': 'start',
@@ -41,6 +42,8 @@ def ec_flat(Tec, Tev):
     ec_result.append(current_data)
     
     for i in range(d.num_cal_ec+ 1):
+        #print('u=',u, 'P=',P, 'T=',T, 'd_gr',d.d_gr, 'Re=',p.Re_g(u, P, T, d.d_gr))
+        #print(f"\n{i+1}kaime")
         
         T_next = ( (p.h_g(u, P, T, d.d_gr)*(Delta_L* d.w_gr+ 2* Delta_L* d.h_gr)*(Tec- Tev)
              + (M_dot*i*Delta_L* p.Cp_g(T)* T/ (d.n_gr* d.L_wick))+ (M_dot*Delta_L* p.Cp_g(Tev)* Tev/ (d.n_gr* d.L_wick)))

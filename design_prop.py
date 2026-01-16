@@ -106,7 +106,7 @@ def design():
     h_sink = 800.0  #[W/m^2-K] 決め打ち外部へのコンデンサ放熱伝達率
     grav_ac = 9.8   #gravity_acceralation
 
-    num_cal_ec, num_cal_vl, num_cal_cl, num_cal_ll = 100, 200, 200, 200
+    num_cal_ec, num_cal_vl, num_cal_cl, num_cal_ll = 20, 200, 200, 200
     #input zone end
 
     #design para convert to SI unit
