@@ -32,36 +32,18 @@ def h_con_Traviss(u, T, d, X_LM):
 
 def h_con_Shah(u, M_dot, x, P, T, d_i):
     P_critical = 3.56e6 
-
-    # 乾き度が0に近い、または1に近い場合は計算を避ける
-    #if x < 0.001 or x > 0.99999:
-        # この範囲では相関式の精度が落ちる可能性があるため、
-        # 単相流の計算に切り替えるなどの処理が望ましい
-        #return None 
-
-    # --- 1. 物性値の取得 ---
-    
-    # --- 2. 無次元数の計算 ---
-    # 換算圧力 Pr (論文中の P_r)
     Pr_reduced = P / P_critical
     G = M_dot/(math.pi* d_i**2* 0.25)
-
-    # 液単相流と仮定した場合のレイノルズ数 Re_lo (Eq. 6の前)
     Re_lo = G* (1- x)* d_i/ p.mu_l(T)
     # Shahの相関パラメータ Z (Eq. 7)
     Z = ((1 / x) - 1)**0.8 * Pr_reduced**0.4
 
-    # 全量が気相と仮定した場合のウェーバー数 We_GT (Eq. 13)
     We_GT = (G**2 * d_i) / (p.rho_g(P,T) * p.sigma(T))
     
-    # 無次元蒸気速度 J_g (Eq. 10)
     Jg_denominator = math.sqrt(d.grav_ac * d_i * p.rho_g(P,T) * (p.rho_l(T) - p.rho_g(P,T)) )
     if Jg_denominator < 1e-9: return None # ゼロ除算防止
     J_g = (x * G) / Jg_denominator
 
-    # --- 3. 熱伝達率の各要素を計算 ---
-    # 液単相流と仮定した場合の熱伝達率 h_lo (Eq. 6)
-    # Dittus-Boelter 式を使用
     h_lo = 0.023 * (Re_lo**0.8) * (p.Pr_l(T)**0.4) * p.k_l(T) / d_i
     
     # 対流凝縮が支配的な場合の熱伝達率 h_I (Eq. 1)

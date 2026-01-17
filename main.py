@@ -66,10 +66,8 @@ def eval_func(Tec, Tev, Q_load):
         u, P, T, rho, x, phase, M_dot, d.L_ll, d.d_i_ll, d.d_o_ll, d.d_o_insu_ll, d.k_ll, d.k_insu_ll, d.h_out, d.T_amb, d.num_cal_ll)
     
     T_ccin = p.T_sat(P)
+
     G_ec_ccc = d.k_flange* (d.w_flange* d.l_flange- d.w_flange_hole* d.l_flange_hole)/ d.L_ccpipe
-
-    G_ec_ccc = 0.3429**2 * 0.2/(0.004/390 + 0.004/16)
-
     G_ccc_ccin = 4.36* p.k_l(T_ccin)* (2* math.pi* d.r_cc* d.H_cc)/ d.d_e_cc + 4.36* p.k_l(T_ccin)* math.pi* d.r_cc* 0.25
 
     T_ccc =( (G_ccc_ccin* T_ccin + d.h_out* (math.pi* d.r_cc**2 *  0.25+ 2* math.pi* d.r_cc* d.H_cc)* d.T_amb + G_ec_ccc* Tec)/
@@ -79,15 +77,14 @@ def eval_func(Tec, Tev, Q_load):
     Q_ec_wick_ccin = 3* k_eff* d.A_wick* (Tev- T_ccin)/ d.H_wick
     Q_ec_ccc = G_ec_ccc* (Tec- T_ccc)
     Q_ec_amb = d.h_out* (d.W_ec* d.L_ec- d.A_hs + d.H_ec*d.W_ec*2 + d.H_ec*d.L_ec*2)* (Tec- d.T_amb)
-    T_hs = (Q_load + d.h_out* d.A_hs* d.T_amb + d.h_hs_ec* d.W_ec*d.L_ec * Tec)/(d.h_out* d.A_hs + d.h_hs_ec* d.W_ec*d.L_ec)
-    #Q_hs_amb = d.h_out* d.A_hs* (T_hs- T_amb)
+    T_hs = Tec+ Q_load/(d.h_hs_ec* d.A_hs)
     Q_ec_in = Q_load #- Q_hs_amb
     Q_ec_out = Q_ev+ Q_gr+ Q_ec_ccc+ Q_ec_wick_ccin+ Q_ec_amb
     eval_ec = (100*(Q_ec_in- Q_ec_out)/ Q_load)**2
   
     Q_cc_ll = M_dot* p.Cp_l(T)* (T_ccin- T)
     Q_ccc_ccin = G_ccc_ccin* (T_ccc-T_ccin)
-    eval_cc = (100*(Q_ccc_ccin+ Q_ec_wick_ccin- Q_cc_ll)/ (Q_load))**2
+    eval_cc = (100*(Q_ccc_ccin+ Q_ec_wick_ccin- Q_cc_ll)/ Q_load)**2
 
     result_dict={
         "Tec":Tec-273.15,

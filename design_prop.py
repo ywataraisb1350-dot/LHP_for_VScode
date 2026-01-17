@@ -8,24 +8,23 @@ from datetime import datetime
 
 def design():
     #design parameter input zone
-    Q_load = 5600   #[W]
-    A_hs = 0.1024*1e6 #152* 79* 8* 1e-6
+    A_hs = 152* 79* 8
     csv_path = 'R1233zdE.csv'
     csv_path_inv = 'R1233zdE_inv.csv'
 
-    W_ec = 342.928563989644 #mm
-    L_ec = 342.928563989644  #mm
+    W_ec = 370 #mm
+    L_ec = 370  #mm
     t_ec_bt = 5 #mm
     t_ec = 5   #mm
     t_ec_up = 5 #mm
     k_ec = 16  #conductivity
     H_ec = 5   #mm
 
-    r_cc = 150
+    r_cc = 170
     t_cc_bt = 4
     t_cc_up = 4
     t_cc = 4
-    H_cc = 0.23
+    H_cc = 250
 
     k_flange = 16
     t_flange = 4
@@ -48,7 +47,7 @@ def design():
     n_gr = 186
     w_gr = 3
     h_gr = 3
-    L_gr = 70
+    L_gr = 62
 
     '''
     W_wick_btm = 280
@@ -110,6 +109,7 @@ def design():
     #input zone end
 
     #design para convert to SI unit
+    
     A_hs = A_hs*1e-6
 
     W_ec = W_ec*1e-3
