@@ -12,13 +12,13 @@ import design_prop
 import ec_flat
 import transline
 
-Q_load = 5600 
+Q_load = 1000
 
-epsilon = 1e-6
-random_start_Tev_min, random_start_Tev_max = 40+273.15, 50.09660727333085 +273.15000000001
-random_start_deltat_min, random_start_deltat_max =(47.676987038329-42.09660727333085), (70.676987038329-42.0966072733308)
+epsilon = 0.01
+random_start_Tev_min, random_start_Tev_max = 41.51029048+273.15, 41.510290485 +273.15000000001
+random_start_deltat_min, random_start_deltat_max =2.11029693, 2.110296939
 max_restarts = 100
-iterations = 30000
+iterations = 3000
 learning_ratio = 2e-2
 grad_clip_threshold = 50000
 learning_rate_adam = 0.2 # 固定学習率より少し大きめに設定できることが多い

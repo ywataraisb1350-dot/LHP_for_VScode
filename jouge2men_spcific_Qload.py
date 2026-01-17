@@ -12,10 +12,12 @@ import design_prop
 import ec_flat
 import transline
 
+Q_load = 1000
+
 epsilon = 0.05
-random_start_Tev_min, random_start_Tev_max = 20+273.15, 60 +273.15000000001
-random_start_deltat_min, random_start_deltat_max =1, 20
-random_start_Delta_BtUp_min,random_start_Delta_BtUp_max = (3,5)
+random_start_Tev_min, random_start_Tev_max = 41.51029048+273.15, 41.510290485 +273.15000000001
+random_start_deltat_min, random_start_deltat_max =2.11029693, 2.110296939
+random_start_Delta_BtUp_min,random_start_Delta_BtUp_max = 0.62, 0.63
 max_restarts = 100
 iterations = 1000
 learning_ratio = 2e-2
@@ -154,106 +156,102 @@ now = datetime.now()
 timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
 os.makedirs(timestamp, exist_ok=True)
 
-
-for j in range(3,7):
-    global_min_val = [None, None, None, float('inf')]
-    convergence = False
-    Q_load = 1000* j
-    print(f"\n熱負荷{Q_load}W")
+global_min_val = [None, None, None, float('inf')]
+convergence = False
     
-    for restart_count in range(max_restarts):
-        Tev = random.uniform(random_start_Tev_min, random_start_Tev_max)
-        Tec_up = random.uniform(Tev + random_start_deltat_min, Tev + random_start_deltat_max)
-        Tec_bt = random.uniform(Tec_up + random_start_Delta_BtUp_min, Tec_up + random_start_Delta_BtUp_max)
-        current_pos = np.array([Tec_bt, Tec_up, Tev])
-        print(f"\nリスタート{restart_count+1}")
-        print(f"\n新しい初期値: Tec_bt={current_pos[0]-273.15}, Tec_up={current_pos[1]-273.15}, Tev={current_pos[2]-273.15}")
-        local_min_val = [None, None, None, float('inf')]
-        violation_found = False
+for restart_count in range(max_restarts):
+    Tev = random.uniform(random_start_Tev_min, random_start_Tev_max)
+    Tec_up = random.uniform(Tev + random_start_deltat_min, Tev + random_start_deltat_max)
+    Tec_bt = random.uniform(Tec_up + random_start_Delta_BtUp_min, Tec_up + random_start_Delta_BtUp_max)
+    current_pos = np.array([Tec_bt, Tec_up, Tev])
+    print(f"\nリスタート{restart_count+1}")
+    print(f"\n新しい初期値: Tec_bt={current_pos[0]-273.15}, Tec_up={current_pos[1]-273.15}, Tev={current_pos[2]-273.15}")
+    local_min_val = [None, None, None, float('inf')]
+    violation_found = False
         
-        for i in range(iterations):
-            eval_val_current = eval_func(Tec_bt, Tec_up, Tev, Q_load)[0]
+    for i in range(iterations):
+        eval_val_current = eval_func(Tec_bt, Tec_up, Tev, Q_load)[0]
             
-            grad_0 = (eval_func(Tec_bt + epsilon, Tec_up, Tev, Q_load)[0] - eval_func(Tec_bt - epsilon, Tec_up, Tev, Q_load)[0]) / (2* epsilon)
-            grad_1 = (eval_func(Tec_bt, Tec_up + epsilon, Tev, Q_load)[0] - eval_func(Tec_bt, Tec_up - epsilon, Tev, Q_load)[0]) / (2* epsilon)
-            grad_2 = (eval_func(Tec_bt, Tec_up, Tev + epsilon, Q_load)[0] - eval_func(Tec_bt, Tec_up, Tev - epsilon, Q_load)[0]) / (2* epsilon)
-            grad = np.array([grad_0, grad_1, grad_2])
-            grad_norm = np.linalg.norm(grad)    
-            if grad_norm > grad_clip_threshold:
-                grad = grad / grad_norm * grad_clip_threshold
+        grad_0 = (eval_func(Tec_bt + epsilon, Tec_up, Tev, Q_load)[0] - eval_func(Tec_bt - epsilon, Tec_up, Tev, Q_load)[0]) / (2* epsilon)
+        grad_1 = (eval_func(Tec_bt, Tec_up + epsilon, Tev, Q_load)[0] - eval_func(Tec_bt, Tec_up - epsilon, Tev, Q_load)[0]) / (2* epsilon)
+        grad_2 = (eval_func(Tec_bt, Tec_up, Tev + epsilon, Q_load)[0] - eval_func(Tec_bt, Tec_up, Tev - epsilon, Q_load)[0]) / (2* epsilon)
+        grad = np.array([grad_0, grad_1, grad_2])
+        grad_norm = np.linalg.norm(grad)    
+        if grad_norm > grad_clip_threshold:
+            grad = grad / grad_norm * grad_clip_threshold
                 
-            t = i + 1
-            m_t = beta1 * m_t + (1 - beta1) * grad      # モーメントの更新
-            v_t = beta2 * v_t + (1 - beta2) * (grad**2) # 2次モーメントの更新
-            m_hat = m_t / (1 - beta1**t) # バイアス補正
-            v_hat = v_t / (1 - beta2**t) # バイアス補正
-            update_vector = learning_rate_adam * m_hat / (np.sqrt(v_hat) + epsilon_adam)
-            next_pos_candidate = current_pos - update_vector
+        t = i + 1
+        m_t = beta1 * m_t + (1 - beta1) * grad      # モーメントの更新
+        v_t = beta2 * v_t + (1 - beta2) * (grad**2) # 2次モーメントの更新
+        m_hat = m_t / (1 - beta1**t) # バイアス補正
+        v_hat = v_t / (1 - beta2**t) # バイアス補正
+        update_vector = learning_rate_adam * m_hat / (np.sqrt(v_hat) + epsilon_adam)
+        next_pos_candidate = current_pos - update_vector
             
-            Tec_bt_candidate = next_pos_candidate[0]
-            Tec_up_candidate = next_pos_candidate[1]
-            Tev_candidate = next_pos_candidate[2]
-            eval_val_next = eval_func(Tec_bt_candidate, Tec_up_candidate, Tev_candidate, Q_load)[0]
+        Tec_bt_candidate = next_pos_candidate[0]
+        Tec_up_candidate = next_pos_candidate[1]
+        Tev_candidate = next_pos_candidate[2]
+        eval_val_next = eval_func(Tec_bt_candidate, Tec_up_candidate, Tev_candidate, Q_load)[0]
             
-            if np.isnan(next_pos_candidate).any():
-                print(f"\nステップ {i+1} で値がnanになりました")
-                violation_found = True
-                break
-            
-            if Tev <= 300 or Tec_bt_candidate <= Tec_up_candidate or Tec_bt_candidate <= Tev :
-                print(f"\nステップ {i+1} で制約違反。")
-                violation_found = True
-                break
-            
-            current_pos = next_pos_candidate
-            Tec_bt = current_pos[0]
-            Tec_up = current_pos[1]
-            Tev = current_pos[2]
-            eval_val_current = eval_val_next
-            
-            if eval_val_current < 0.5:
-                print(f"\nステップ {i+1} で評価関数の値が {eval_val_current} となり、0.5未満になったため計算を終了します。")
-                print('Tec_bt=', Tec_bt-273.15, 'Tec_up=', Tec_up-273.15, 'Tev=', Tev-273.15)
-                global_min_val = [Tec_bt, Tec_up, Tev, eval_val_current]
-                convergence = True
-                break
-            
-            if(i+ 1)%5 == 0:
-                print('Tec_bt=', Tec_bt-273.15, 'Tec_up=', Tec_up-273.15, 'Tev=', Tev-273.15, 'val=', eval_val_current)
-                print('step', i+1)
-                
-            if eval_val_current < local_min_val[3]:
-                local_min_val = [Tec_bt, Tec_up, Tev, eval_val_current]
-                
-        if convergence:
+        if np.isnan(next_pos_candidate).any():
+            print(f"\nステップ {i+1} で値がnanになりました")
+            violation_found = True
             break
-        
-        if local_min_val[0] is not None:
-            if local_min_val[3] < global_min_val[3]:
-                global_min_val = local_min_val
+            
+        if Tev <= 300 or Tec_bt_candidate <= Tec_up_candidate or Tec_bt_candidate <= Tev :
+            print(f"\nステップ {i+1} で制約違反。")
+            violation_found = True
+            break
+            
+        current_pos = next_pos_candidate
+        Tec_bt = current_pos[0]
+        Tec_up = current_pos[1]
+        Tev = current_pos[2]
+        eval_val_current = eval_val_next
+            
+        if eval_val_current < 0.5:
+            print(f"\nステップ {i+1} で評価関数の値が {eval_val_current} となり、0.5未満になったため計算を終了します。")
+            print('Tec_bt=', Tec_bt-273.15, 'Tec_up=', Tec_up-273.15, 'Tev=', Tev-273.15)
+            global_min_val = [Tec_bt, Tec_up, Tev, eval_val_current]
+            convergence = True
+            break
+            
+        if(i+ 1)%5 == 0:
+            print('Tec_bt=', Tec_bt-273.15, 'Tec_up=', Tec_up-273.15, 'Tev=', Tev-273.15, 'val=', eval_val_current)
+            print('step', i+1)
                 
-    (eval_val, df_ec_bt, df_ec_up, df_vl, df_cl, df_ll, T_hs, Tec_bt, Tec_up, T_ave_cl, P_cap, P_loss_wick, 
-     P_loss_gr, P_loss_vl, P_loss_cl, P_loss_ll, result_dict) = eval_func(global_min_val[0], global_min_val[1], global_min_val[2], Q_load)
+        if eval_val_current < local_min_val[3]:
+            local_min_val = [Tec_bt, Tec_up, Tev, eval_val_current]
+                
+    if convergence:
+        break
+        
+    if local_min_val[0] is not None:
+        if local_min_val[3] < global_min_val[3]:
+            global_min_val = local_min_val
+                
+(eval_val, df_ec_bt, df_ec_up, df_vl, df_cl, df_ll, T_hs, Tec_bt, Tec_up, T_ave_cl, P_cap, P_loss_wick, 
+    P_loss_gr, P_loss_vl, P_loss_cl, P_loss_ll, result_dict) = eval_func(global_min_val[0], global_min_val[1], global_min_val[2], Q_load)
     
-    status_str = "True" if convergence else "False"
-    sub_dir_name = f"{timestamp}_{Q_load}W"
-    sub_dir = os.path.join(timestamp, sub_dir_name)
-    os.makedirs(sub_dir, exist_ok=True)
-    file_path_ec_bt = os.path.join(sub_dir, f'ecBT_{timestamp}_{Q_load}W_{status_str}.csv')
-    df_ec_bt.to_csv(file_path_ec_bt, index=False)
-    file_path_ec_up = os.path.join(sub_dir, f'ecUP_{timestamp}_{Q_load}W_{status_str}.csv')
-    df_ec_bt.to_csv(file_path_ec_up, index=False)
-    file_path_vl = os.path.join(sub_dir, f'vl_{timestamp}_{Q_load}W_{status_str}.csv')
-    df_vl.to_csv(file_path_vl, index=False)
-    file_path_cl = os.path.join(sub_dir, f'cl_{timestamp}_{Q_load}W_{status_str}.csv')
-    df_cl.to_csv(file_path_cl, index=False)
-    file_path_ll = os.path.join(sub_dir, f'll_{timestamp}_{Q_load}W_{status_str}.csv')
-    df_ll.to_csv(file_path_ll, index=False)
-    df_res = pd.DataFrame(result_dict.items(), columns=['lavel', 'val'])
-    file_path_res = os.path.join(sub_dir, f'result_{timestamp}_{Q_load}W_{status_str}.csv')
-    df_res.to_csv(file_path_res, index=False)
+status_str = "True" if convergence else "False"
+sub_dir_name = f"{timestamp}_{Q_load}W"
+sub_dir = os.path.join(timestamp, sub_dir_name)
+os.makedirs(sub_dir, exist_ok=True)
+file_path_ec_bt = os.path.join(sub_dir, f'ecBT_{timestamp}_{Q_load}W_{status_str}.csv')
+df_ec_bt.to_csv(file_path_ec_bt, index=False)
+file_path_ec_up = os.path.join(sub_dir, f'ecUP_{timestamp}_{Q_load}W_{status_str}.csv')
+df_ec_bt.to_csv(file_path_ec_up, index=False)
+file_path_vl = os.path.join(sub_dir, f'vl_{timestamp}_{Q_load}W_{status_str}.csv')
+df_vl.to_csv(file_path_vl, index=False)
+file_path_cl = os.path.join(sub_dir, f'cl_{timestamp}_{Q_load}W_{status_str}.csv')
+df_cl.to_csv(file_path_cl, index=False)
+file_path_ll = os.path.join(sub_dir, f'll_{timestamp}_{Q_load}W_{status_str}.csv')
+df_ll.to_csv(file_path_ll, index=False)
+df_res = pd.DataFrame(result_dict.items(), columns=['lavel', 'val'])
+file_path_res = os.path.join(sub_dir, f'result_{timestamp}_{Q_load}W_{status_str}.csv')
+df_res.to_csv(file_path_res, index=False)
     
-    key_result_dict = {
+key_result_dict = {
         "Q_load":Q_load,
         "HS":T_hs-273.15,
         "EC_bt":Tec_bt-273.15,
@@ -268,7 +266,7 @@ for j in range(3,7):
         "converg_judge":convergence
         }
     
-    key_result.append(key_result_dict)
+key_result.append(key_result_dict)
     
 df_keyres = pd.DataFrame(key_result)
 file_path_keyres = os.path.join(timestamp, f'KEYresult_{timestamp}.csv')
