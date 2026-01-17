@@ -12,7 +12,7 @@ import design_prop
 import ec_flat
 import transline
 
-epsilon = 1e-6
+epsilon = 0.05
 random_start_Tev_min, random_start_Tev_max = 30+273.15, 50.09660727333085 +273.15000000001
 random_start_deltat_min, random_start_deltat_max =10, 20
 random_start_Delta_BtUp_min,random_start_Delta_BtUp_max = (3,5)
@@ -20,7 +20,7 @@ max_restarts = 100
 iterations = 30000
 learning_ratio = 2e-2
 grad_clip_threshold = 50000
-learning_rate_adam = 0.2 # 固定学習率より少し大きめに設定できることが多い
+learning_rate_adam = 0.3 # 固定学習率より少し大きめに設定できることが多い
 beta1 = 0.9
 beta2 = 0.9
 epsilon_adam = 0.1
