@@ -13,8 +13,8 @@ import ec_flat
 import transline
 
 epsilon = 0.05
-random_start_Tev_min, random_start_Tev_max = 30+273.15, 50.09660727333085 +273.15000000001
-random_start_deltat_min, random_start_deltat_max =10, 20
+random_start_Tev_min, random_start_Tev_max = 20+273.15, 60 +273.15000000001
+random_start_deltat_min, random_start_deltat_max =1, 20
 random_start_Delta_BtUp_min,random_start_Delta_BtUp_max = (3,5)
 max_restarts = 100
 iterations = 30000
@@ -103,6 +103,7 @@ def eval_func(Tec_bt, Tec_up, Tev, Q_load):
     Q_cc_ll = M_dot* p.Cp_l(T)* (T_ccin- T)
     Q_ccc_ccin = G_ccc_ccin* (T_ccc-T_ccin)
     eval_cc = (100*(Q_ccc_ccin+ Q_ec_wick_ccin- Q_cc_ll)/ Q_load)**2
+    print('QevBT=',Q_ev_bt, 'QgrBT=',Q_gr_bt, 'QevUP=',Q_ev_up, 'QgrUP=',Q_gr_up, 'Q_ecBTUP',Q_ecBT_ecUP)
 
     result_dict={
         "Tec_bt":Tec_bt-273.15,
