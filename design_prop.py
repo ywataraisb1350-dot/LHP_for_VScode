@@ -17,8 +17,8 @@ def design():
     t_ec_bt = 5 #mm
     t_ec = 5   #mm
     t_ec_up = 5 #mm
-    k_ec = 16  #conductivity
-    H_ec = 5   #mm
+    k_ec = 390  #conductivity
+    H_ec = 40   #mm
 
     r_cc = 170
     t_cc_bt = 4
