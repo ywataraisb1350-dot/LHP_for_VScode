@@ -17,7 +17,7 @@ random_start_Tev_min, random_start_Tev_max = 20+273.15, 60 +273.15000000001
 random_start_deltat_min, random_start_deltat_max =1, 20
 random_start_Delta_BtUp_min,random_start_Delta_BtUp_max = (3,5)
 max_restarts = 100
-iterations = 30000
+iterations = 3000
 learning_ratio = 2e-2
 grad_clip_threshold = 50000
 learning_rate_adam = 0.3 # 固定学習率より少し大きめに設定できることが多い
@@ -103,7 +103,7 @@ def eval_func(Tec_bt, Tec_up, Tev, Q_load):
     Q_cc_ll = M_dot* p.Cp_l(T)* (T_ccin- T)
     Q_ccc_ccin = G_ccc_ccin* (T_ccc-T_ccin)
     eval_cc = (100*(Q_ccc_ccin+ Q_ec_wick_ccin- Q_cc_ll)/ Q_load)**2
-    print('QevBT=',Q_ev_bt, 'QgrBT=',Q_gr_bt, 'QevUP=',Q_ev_up, 'QgrUP=',Q_gr_up, 'Q_ecBTUP',Q_ecBT_ecUP)
+    #print('QevBT=',Q_ev_bt, 'QgrBT=',Q_gr_bt, 'QevUP=',Q_ev_up, 'QgrUP=',Q_gr_up, 'Q_ecBTUP',Q_ecBT_ecUP)
 
     result_dict={
         "Tec_bt":Tec_bt-273.15,
@@ -219,7 +219,7 @@ for j in range(1,7):
                 break
             
             if(i+ 1)%5 == 0:
-                print('Tec_bt=', Tec_bt-273.15, 'Tec_up=', Tec_up-273.15, 'Tev=', Tev-273.15, eval_val_current)
+                print('Tec_bt=', Tec_bt-273.15, 'Tec_up=', Tec_up-273.15, 'Tev=', Tev-273.15, 'val=', eval_val_current)
                 print('step', i+1)
                 
             if eval_val_current < local_min_val[3]:
