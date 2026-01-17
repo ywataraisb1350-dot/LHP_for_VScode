@@ -13,8 +13,8 @@ import ec_flat
 import transline
 
 epsilon = 1e-6
-random_start_Tev_min, random_start_Tev_max = 40+273.15, 50.09660727333085 +273.15000000001
-random_start_deltat_min, random_start_deltat_max =(47.676987038329-42.09660727333085), (70.676987038329-42.0966072733308)
+random_start_Tev_min, random_start_Tev_max = 30+273.15, 50.09660727333085 +273.15000000001
+random_start_deltat_min, random_start_deltat_max =10, 20
 random_start_Delta_BtUp_min,random_start_Delta_BtUp_max = (3,5)
 max_restarts = 100
 iterations = 30000
