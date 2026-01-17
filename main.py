@@ -66,7 +66,8 @@ def eval_func(Tec, Tev, Q_load):
         u, P, T, rho, x, phase, M_dot, d.L_ll, d.d_i_ll, d.d_o_ll, d.d_o_insu_ll, d.k_ll, d.k_insu_ll, d.h_out, d.T_amb, d.num_cal_ll)
     
     T_ccin = p.T_sat(P)
-    G_ec_ccc = d.k_flange* (d.w_flange* d.l_flange- d.w_flange_hole- d.l_flange_hole)/ d.L_ccpipe
+
+    G_ec_ccc = d.k_flange* (d.w_flange* d.l_flange- d.w_flange_hole* d.l_flange_hole)/ d.L_ccpipe
     G_ccc_ccin = 4.36* p.k_l(T_ccin)* (2* math.pi* d.r_cc* d.H_cc)/ d.d_e_cc + 4.36* p.k_l(T_ccin)* math.pi* d.r_cc* 0.25
 
     T_ccc =( (G_ccc_ccin* T_ccin + d.h_out* (math.pi* d.r_cc**2 *  0.25+ 2* math.pi* d.r_cc* d.H_cc)* d.T_amb + G_ec_ccc* Tec)/
@@ -76,20 +77,19 @@ def eval_func(Tec, Tev, Q_load):
     Q_ec_wick_ccin = 3* k_eff* d.A_wick* (Tev- T_ccin)/ d.H_wick
     Q_ec_ccc = G_ec_ccc* (Tec- T_ccc)
     Q_ec_amb = d.h_out* (d.W_ec* d.L_ec- d.A_hs + d.H_ec*d.W_ec*2 + d.H_ec*d.L_ec*2)* (Tec- d.T_amb)
-    T_hs = (Q_load + d.h_out* d.A_hs* d.T_amb + d.h_hs_ec* d.W_ec*d.L_ec * Tec)/(d.h_out* d.A_hs + d.h_hs_ec* d.W_ec*d.L_ec)
-    #Q_hs_amb = d.h_out* d.A_hs* (T_hs- T_amb)
+    T_hs = Tec+ Q_load/(d.h_hs_ec* d.A_hs)
     Q_ec_in = Q_load #- Q_hs_amb
     Q_ec_out = Q_ev+ Q_gr+ Q_ec_ccc+ Q_ec_wick_ccin+ Q_ec_amb
     eval_ec = (100*(Q_ec_in- Q_ec_out)/ Q_load)**2
   
     Q_cc_ll = M_dot* p.Cp_l(T)* (T_ccin- T)
     Q_ccc_ccin = G_ccc_ccin* (T_ccc-T_ccin)
-    eval_cc = (100*(Q_ccc_ccin+ Q_ec_wick_ccin- Q_cc_ll)/ (Q_load))**2
+    eval_cc = (100*(Q_ccc_ccin+ Q_ec_wick_ccin- Q_cc_ll)/ Q_load)**2
 
     result_dict={
         "Tec":Tec-273.15,
         "Tev":Tev-273.15,
-        "T_ini_vl":T_ini_vl-273015,
+        "T_ini_vl":T_ini_vl-273.15,
         "T_ave_vl":T_ave_vl-273.15,
         "T_ini_cl":T_ini_cl-273.15,
         "T_ave_cl":T_ave_cl-273.15,
@@ -108,8 +108,8 @@ def eval_func(Tec, Tev, Q_load):
         #"Q_hs_amb"
         "Q_cc_ll":Q_cc_ll,
         "Q_ccc_ccin":Q_ccc_ccin,
-        "eval_ec[%]":eval_ec,
-        "eval_cc[%]":eval_cc,
+        "eval_ec[%]":math.sqrt(eval_ec),
+        "eval_cc[%]":math.sqrt(eval_cc),
         
         "P_cap.":P_cap,
         "P_loss_wick":P_loss_wick,
@@ -203,9 +203,10 @@ for j in range(1,7):
     (eval_val, df_ec, df_vl, df_cl, df_ll, T_hs, Tec, T_ave_cl, P_cap, P_loss_wick, 
      P_loss_gr, P_loss_vl, P_loss_cl, P_loss_ll, result_dict) = eval_func(global_min_val[0], global_min_val[1], Q_load)
     
-    status_str = "convergence-True" if convergence else "convergence-False"
+    status_str = "True" if convergence else "False"
     sub_dir_name = f"{timestamp}_{Q_load}W"
     sub_dir = os.path.join(timestamp, sub_dir_name)
+    os.makedirs(sub_dir, exist_ok=True)
     file_path_ec = os.path.join(sub_dir, f'ec_{timestamp}_{Q_load}W_{status_str}.csv')
     df_ec.to_csv(file_path_ec, index=False)
     file_path_vl = os.path.join(sub_dir, f'vl_{timestamp}_{Q_load}W_{status_str}.csv')
@@ -215,19 +216,20 @@ for j in range(1,7):
     file_path_ll = os.path.join(sub_dir, f'll_{timestamp}_{Q_load}W_{status_str}.csv')
     df_ll.to_csv(file_path_ll, index=False)
     df_res = pd.DataFrame(result_dict.items(), columns=['lavel', 'val'])
-    file_path_res = os.path.join(timestamp, f'result_{timestamp}_{Q_load}W_{status_str}.csv')
+    file_path_res = os.path.join(sub_dir, f'result_{timestamp}_{Q_load}W_{status_str}.csv')
     df_res.to_csv(file_path_res, index=False)
     
     key_result_dict = {
         "Q_load":Q_load,
-        "HS":T_hs,
-        "EC":Tec,
-        "CL ave.":T_ave_cl,
+        "HS":T_hs-273.15,
+        "EC":Tec-273.15,
+        "CL ave.":T_ave_cl-273.15,
         "wick":P_loss_wick,
         "groove":P_loss_gr,
         "VL":P_loss_vl,
         "CL":P_loss_cl,
         "LL":P_loss_ll,
+        "Cap.":P_cap,
         "converg_judge":convergence
         }
     
@@ -235,13 +237,12 @@ for j in range(1,7):
     
 df_keyres = pd.DataFrame(key_result)
 file_path_keyres = os.path.join(timestamp, f'KEYresult_{timestamp}.csv')
-df_keyres.to_csv(file_path_res, index=False)
+df_keyres.to_csv(file_path_keyres, index=False)
 
-df_cal_para = pd.DataFrame(dict_cal_parameter)
+df_cal_para = pd.DataFrame(list(dict_cal_parameter.items()), columns=['parameter', 'value'])
 file_path_cal_para = os.path.join(timestamp, f'cal_para_{timestamp}.csv')
-df_cal_para.to_csv(file_path_res, index=False)
+df_cal_para.to_csv(file_path_cal_para, index=False)
 
-Q_load,Tec,Tev = 6000,63+273,43+273
-(eval_val, df_ec, df_vl, df_cl, df_ll, 
-            T_hs, Tec, T_ave_cl, P_cap, P_loss_wick, P_loss_gr, P_loss_vl, P_loss_cl, P_loss_ll, result_dict)=eval_func(Tec,Tev,Q_load)
-print(eval_val)
+df_design = pd.DataFrame(list(design_dict.items()), columns=['parameter', 'value'])
+file_path_design = os.path.join(timestamp, f'design_{timestamp}.csv')
+df_design.to_csv(file_path_design, index=False)
