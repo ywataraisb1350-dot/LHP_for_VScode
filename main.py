@@ -67,6 +67,9 @@ def eval_func(Tec, Tev, Q_load):
     
     T_ccin = p.T_sat(P)
     G_ec_ccc = d.k_flange* (d.w_flange* d.l_flange- d.w_flange_hole* d.l_flange_hole)/ d.L_ccpipe
+
+    G_ec_ccc = 0.3429**2 * 0.2/(0.004/390 + 0.004/16)
+
     G_ccc_ccin = 4.36* p.k_l(T_ccin)* (2* math.pi* d.r_cc* d.H_cc)/ d.d_e_cc + 4.36* p.k_l(T_ccin)* math.pi* d.r_cc* 0.25
 
     T_ccc =( (G_ccc_ccin* T_ccin + d.h_out* (math.pi* d.r_cc**2 *  0.25+ 2* math.pi* d.r_cc* d.H_cc)* d.T_amb + G_ec_ccc* Tec)/
@@ -89,7 +92,7 @@ def eval_func(Tec, Tev, Q_load):
     result_dict={
         "Tec":Tec-273.15,
         "Tev":Tev-273.15,
-        "T_ini_vl":T_ini_vl-273015,
+        "T_ini_vl":T_ini_vl-273.15,
         "T_ave_vl":T_ave_vl-273.15,
         "T_ini_cl":T_ini_cl-273.15,
         "T_ave_cl":T_ave_cl-273.15,
@@ -242,3 +245,7 @@ df_keyres.to_csv(file_path_keyres, index=False)
 df_cal_para = pd.DataFrame(list(dict_cal_parameter.items()), columns=['parameter', 'value'])
 file_path_cal_para = os.path.join(timestamp, f'cal_para_{timestamp}.csv')
 df_cal_para.to_csv(file_path_cal_para, index=False)
+
+df_design = pd.DataFrame(list(design_dict.items()), columns=['parameter', 'value'])
+file_path_design = os.path.join(timestamp, f'design_{timestamp}.csv')
+df_design.to_csv(file_path_design, index=False)

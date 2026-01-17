@@ -30,6 +30,75 @@ def h_con_Traviss(u, T, d, X_LM):
     
     return h_in
 
+def h_con_Shah(u, M_dot, x, P, T, d_i):
+    P_critical = 3.56e6 
+
+    # 乾き度が0に近い、または1に近い場合は計算を避ける
+    #if x < 0.001 or x > 0.99999:
+        # この範囲では相関式の精度が落ちる可能性があるため、
+        # 単相流の計算に切り替えるなどの処理が望ましい
+        #return None 
+
+    # --- 1. 物性値の取得 ---
+    
+    # --- 2. 無次元数の計算 ---
+    # 換算圧力 Pr (論文中の P_r)
+    Pr_reduced = P / P_critical
+    G = M_dot/(math.pi* d_i**2* 0.25)
+
+    # 液単相流と仮定した場合のレイノルズ数 Re_lo (Eq. 6の前)
+    Re_lo = G* (1- x)* d_i/ p.mu_l(T)
+    # Shahの相関パラメータ Z (Eq. 7)
+    Z = ((1 / x) - 1)**0.8 * Pr_reduced**0.4
+
+    # 全量が気相と仮定した場合のウェーバー数 We_GT (Eq. 13)
+    We_GT = (G**2 * d_i) / (p.rho_g(P,T) * p.sigma(T))
+    
+    # 無次元蒸気速度 J_g (Eq. 10)
+    Jg_denominator = math.sqrt(d.grav_ac * d_i * p.rho_g(P,T) * (p.rho_l(T) - p.rho_g(P,T)) )
+    if Jg_denominator < 1e-9: return None # ゼロ除算防止
+    J_g = (x * G) / Jg_denominator
+
+    # --- 3. 熱伝達率の各要素を計算 ---
+    # 液単相流と仮定した場合の熱伝達率 h_lo (Eq. 6)
+    # Dittus-Boelter 式を使用
+    h_lo = 0.023 * (Re_lo**0.8) * (p.Pr_l(T)**0.4) * p.k_l(T) / d_i
+    
+    # 対流凝縮が支配的な場合の熱伝達率 h_I (Eq. 1)
+    # (論文では粘性比の項が追加されているが、Correlation #1では使わない)
+    if Z < 1e-9: Z = 1e-9 # ゼロ除算防止
+    h_I = h_lo* ( 1+ 1.128* x**0.817* (p.rho_l(T)/ p.rho_g(P, T))**0.3685 * (p.mu_l(T)/p.mu_g(T))**0.2363 * (1- p.mu_g(T)/p.mu_l(T))**2.144 * p.Pr_l(T)**(-1) )
+    # 重力支配（層流膜状凝縮）の場合の熱伝達率 h_Nu (Eq. 2)
+    # Nusseltの式を修正したもの
+    if Re_lo < 1e-9: Re_lo = 1e-9 # ゼロ除算防止
+    h_Nu_term1 = 1.32 * (Re_lo**(-1/3))
+    h_Nu_term2 = ((p.rho_l(T) * (p.rho_l(T) - p.rho_g(P,T)) * d.grav_ac * (p.k_l(T)**3)) / (p.mu_l(T)**2))**(1/3)
+    h_Nu = h_Nu_term1 * h_Nu_term2
+
+    # --- 4. 熱伝達レジームの判定 (水平管の場合, Section 4.1) ---
+    # Regime I の条件式 (Eq. 23)
+    Jg_crit_I = 0.98 * (Z + 0.263)**(-0.62)
+    
+    # Regime III の条件式 (Eq. 24)
+    Jg_crit_III = 0.95 * (1.254 + 2.27 * Z**1.249)**(-1)
+
+    regime = "II" # デフォルトは Regime II
+    if We_GT > 100 and J_g >= Jg_crit_I:
+        regime = "I"
+    elif We_GT > 20 and J_g <= Jg_crit_III:
+        regime = "III"
+
+    # --- 5. レジームに応じて最終的な熱伝達率 h_TP を計算 ---
+    h_TP = 0.0
+    if regime == "I":   # (Eq. 3)
+        h_TP = h_I
+    elif regime == "II":  # (Eq. 4)
+        h_TP = h_I + h_Nu
+    elif regime == "III": # (Eq. 5)
+        h_TP = h_Nu
+        
+    return h_TP
+
 def G_gas(u, P, T, Delta_L, d_i, d_o, d_o_insu, k, k_insu, h_ex, T_ex):
     h_in = p.h_g(u,P,T,d_i)
     #h_ex = (T-T_ex)*?
@@ -53,8 +122,8 @@ def G_liq(u, P, T, Delta_L, d_i, d_o, d_o_insu, k, k_insu, h_ex, T_ex):
 
 def G_mix(u, P, T, Delta_L, d_i, d_o, d_o_insu, k, k_insu, h_ex, T_ex, M_dot, x, X_LM):
     #h_in = beta
-    #h_in = h_con(u, M_dot, x, P, T, d_i)
-    h_in = h_con_Traviss(u, T, d_i, X_LM)
+    #h_in = h_con_Traviss(u, T, d, X_LM)
+    h_in = h_con_Shah(u, M_dot, x, P, T, d_i)
     R_1 = 1/ (h_in* math.pi* d_i* Delta_L)
     R_2 = math.log(d_o/d_i)/ (2* math.pi* k* Delta_L)
     R_3 = math.log(d_o_insu/d_o)/ (2* math.pi* k_insu* Delta_L)

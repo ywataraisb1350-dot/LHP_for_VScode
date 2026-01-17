@@ -9,23 +9,23 @@ from datetime import datetime
 def design():
     #design parameter input zone
     Q_load = 5600   #[W]
-    A_hs = 152* 79* 8* 1e-6
+    A_hs = 0.1024*1e6 #152* 79* 8* 1e-6
     csv_path = 'R1233zdE.csv'
     csv_path_inv = 'R1233zdE_inv.csv'
 
-    W_ec = 320  #mm
-    L_ec = 320  #mm
+    W_ec = 342.928563989644 #mm
+    L_ec = 342.928563989644  #mm
     t_ec_bt = 5 #mm
-    t_ec = 10   #mm
+    t_ec = 5   #mm
     t_ec_up = 5 #mm
-    k_ec = 390  #conductivity
-    H_ec = 40   #mm
+    k_ec = 16  #conductivity
+    H_ec = 5   #mm
 
-    r_cc = 160
+    r_cc = 150
     t_cc_bt = 4
     t_cc_up = 4
     t_cc = 4
-    H_cc = 200
+    H_cc = 0.23
 
     k_flange = 16
     t_flange = 4
@@ -45,10 +45,10 @@ def design():
     r_max_pore = 3 #unit micro meter enter radius! not diameter!!!
     epsilon_wick = 0.6
     contact_angle = 10 #deg
-    n_gr = 176
+    n_gr = 186
     w_gr = 3
     h_gr = 3
-    L_gr = 62
+    L_gr = 70
 
     '''
     W_wick_btm = 280
@@ -100,16 +100,18 @@ def design():
 
     T_amb = 30      #[celsius temp]
     T_sink = 30
-    alpha = 2500   #[W/m^2-K] 蒸発熱伝達率A_ecベースの値
+    alpha = 5000   #[W/m^2-K] 蒸発熱伝達率A_ecベースの値
     h_hs_ec = 4000  #[W/m^2-K] 熱源-蒸発器熱伝達率
     h_out = 20.0    #[W/m^2-K] 決め打ち外部への放熱伝達率
     h_sink = 800.0  #[W/m^2-K] 決め打ち外部へのコンデンサ放熱伝達率
     grav_ac = 9.8   #gravity_acceralation
 
-    num_cal_ec, num_cal_vl, num_cal_cl, num_cal_ll = 20, 200, 200, 200
+    num_cal_ec, num_cal_vl, num_cal_cl, num_cal_ll = 100, 100, 200, 100
     #input zone end
 
     #design para convert to SI unit
+    A_hs = A_hs*1e-6
+
     W_ec = W_ec*1e-3
     L_ec = L_ec*1e-3
     t_ec_bt = t_ec_bt*1e-3
