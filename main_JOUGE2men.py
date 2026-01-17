@@ -15,6 +15,7 @@ import transline
 epsilon = 1e-6
 random_start_Tev_min, random_start_Tev_max = 40+273.15, 50.09660727333085 +273.15000000001
 random_start_deltat_min, random_start_deltat_max =(47.676987038329-42.09660727333085), (70.676987038329-42.0966072733308)
+random_start_Delta_BtUp_min,random_start_Delta_BtUp_max = (3,5)
 max_restarts = 100
 iterations = 30000
 learning_ratio = 2e-2
@@ -23,8 +24,8 @@ learning_rate_adam = 0.2 # 固定学習率より少し大きめに設定でき�
 beta1 = 0.9
 beta2 = 0.9
 epsilon_adam = 0.1
-m_t = np.zeros(2) # モーメントベクトル
-v_t = np.zeros(2)
+m_t = np.zeros(3) # モーメントベクトル
+v_t = np.zeros(3)
 
 dict_cal_parameter = {
     "epsilon":epsilon,
@@ -49,15 +50,21 @@ p = types.SimpleNamespace(**prop_dict)
 
 def eval_func(Tec_bt, Tec_up, Tev, Q_load):
 
-    P_ec_btGRout, T_ec_btGRout, df_ec_bt, M_dot_bt, Q_ev_bt, Q_gr_bt, P_loss_gr_bt, P_loss_wick_flat, P_loss_wick_gr, P_cap_bt = ec_flat.ec_flat(Tec_bt, Tev)
+    (P_ec_btGRout, T_ec_btGRout, df_ec_bt, M_dot_bt, Q_ev_bt, Q_gr_bt, P_loss_gr_bt, 
+     P_loss_wick_flat, P_loss_wick_gr, P_cap_bt) = ec_flat.ec_flat(Tec_bt, Tev)
     P_loss_wick_bt = P_loss_wick_flat+ P_loss_wick_gr
 
-    P_ec_upGRout, T_ec_upGRout, df_ec_up, M_dot_up, Q_ev_up, Q_gr_up, P_loss_gr_up, P_loss_wick_flat, P_loss_wick_gr, P_cap_up = ec_flat.ec_flat(Tec_up, Tev)
+    (P_ec_upGRout, T_ec_upGRout, df_ec_up, M_dot_up, Q_ev_up, Q_gr_up, P_loss_gr_up, 
+     P_loss_wick_flat, P_loss_wick_gr, P_cap_up) = ec_flat.ec_flat(Tec_up, Tev)
     P_loss_wick_up = P_loss_wick_flat+ P_loss_wick_gr
 
     M_dot = M_dot_bt + M_dot_up
     P = min([P_ec_btGRout, P_ec_upGRout])
     T = (T_ec_btGRout*M_dot_bt + T_ec_upGRout*M_dot_up)/ M_dot
+
+    P_cap = min([P_cap_bt,P_cap_up])
+    P_loss_wick = max([P_loss_wick_bt, P_loss_wick_up])
+    P_loss_gr = max([P_loss_gr_bt, P_loss_gr_up])
 
     rho = p.rho_g(P,T)
     x, phase = 1, 'gas'
@@ -77,14 +84,14 @@ def eval_func(Tec_bt, Tec_up, Tev, Q_load):
     G_ec_ccc = d.k_flange* (d.w_flange* d.l_flange- d.w_flange_hole* d.l_flange_hole)/ d.L_ccpipe
     G_ccc_ccin = 4.36* p.k_l(T_ccin)* (2* math.pi* d.r_cc* d.H_cc)/ d.d_e_cc + 4.36* p.k_l(T_ccin)* math.pi* d.r_cc* 0.25
 
-    T_ccc =( (G_ccc_ccin* T_ccin + d.h_out* (math.pi* d.r_cc**2 *  0.25+ 2* math.pi* d.r_cc* d.H_cc)* d.T_amb + G_ec_ccc* Tec)/
+    T_ccc =( (G_ccc_ccin* T_ccin + d.h_out* (math.pi* d.r_cc**2 *  0.25+ 2* math.pi* d.r_cc* d.H_cc)* d.T_amb + G_ec_ccc* Tec_bt)/
         (G_ccc_ccin+ d.h_out* (math.pi* d.r_cc**2 *  0.25+ 2* math.pi* d.r_cc* d.H_cc) + G_ec_ccc) )
     
     k_eff = d.epsilon_wick* p.k_l(T_ccin)+ (1- d.epsilon_wick)* d.k_wick
     Q_ec_wick_ccin = 3* k_eff* d.A_wick* (Tev- T_ccin)/ d.H_wick
-    Q_ec_ccc = G_ec_ccc* (Tec- T_ccc)
-    Q_ec_amb = d.h_out* (d.W_ec* d.L_ec- d.A_hs + d.H_ec*d.W_ec*2 + d.H_ec*d.L_ec*2)* (Tec- d.T_amb)
-    T_hs = Tec+ Q_load/(d.h_hs_ec* d.A_hs)
+    Q_ec_ccc = G_ec_ccc* (Tec_bt- T_ccc)
+    Q_ec_amb = d.h_out* (d.W_ec* d.L_ec- d.A_hs + d.H_ec*d.W_ec*2 + d.H_ec*d.L_ec*2)* (Tec_bt- d.T_amb)
+    T_hs = Tec_bt+ Q_load/(d.h_hs_ec* d.A_hs)
     Q_ec_bt_in = Q_load #- Q_hs_amb
     Q_ecBT_ecUP = d.k_ec* (d.W_ec*d.L_ec - d.A_wick)* (Tec_bt- Tec_up)/ d.H_ec
     Q_ec_bt_out = Q_ev_bt+ Q_gr_bt+ Q_ecBT_ecUP+ Q_ec_ccc+ Q_ec_wick_ccin+ Q_ec_amb
@@ -127,7 +134,7 @@ def eval_func(Tec_bt, Tec_up, Tev, Q_load):
         "eval_ec_up[%]":math.sqrt(eval_ec_up),
         "eval_cc[%]":math.sqrt(eval_cc),
         
-        "P_cap._bt":P_cap_bt,
+        "P_cap.bt":P_cap_bt,
         "P_cap.up":P_cap_up,
         "P_loss_wick_bt":P_loss_wick_bt,
         "P_loss_wick_up":P_loss_wick_up,
@@ -138,8 +145,8 @@ def eval_func(Tec_bt, Tec_up, Tev, Q_load):
         "P_loss_ll":P_loss_ll
     }
 
-    return (eval_ec_bt+eval_ec_up+eval_cc, df_ec, df_vl, df_cl, df_ll, 
-            T_hs, Tec, T_ave_cl, P_cap, P_loss_wick, P_loss_gr, P_loss_vl, P_loss_cl, P_loss_ll, result_dict)
+    return (eval_ec_bt+eval_ec_up+eval_cc, df_ec_bt, df_ec_up, df_vl, df_cl, df_ll, 
+            T_hs, Tec_bt, Tec_up, T_ave_cl, P_cap, P_loss_wick, P_loss_gr, P_loss_vl, P_loss_cl, P_loss_ll, result_dict)
     
 key_result = []
 now = datetime.now()
@@ -148,7 +155,7 @@ os.makedirs(timestamp, exist_ok=True)
 
 
 for j in range(1,7):
-    global_min_val = [None, None, float('inf')]
+    global_min_val = [None, None, None, float('inf')]
     convergence = False
     Q_load = 1000* j
     print(f"\n熱負荷{Q_load}W")
@@ -156,18 +163,20 @@ for j in range(1,7):
     for restart_count in range(max_restarts):
         Tev = random.uniform(random_start_Tev_min, random_start_Tev_max)
         Tec_up = random.uniform(Tev + random_start_deltat_min, Tev + random_start_deltat_max)
-        Tec_bt = random.uniform(Tec_up + 3, Tec_up + 5)
+        Tec_bt = random.uniform(Tec_up + random_start_Delta_BtUp_min, Tec_up + random_start_Delta_BtUp_max)
         current_pos = np.array([Tec_bt, Tec_up, Tev])
         print(f"\nリスタート{restart_count+1}")
-        print(f"\n新しい初期値: Tec={current_pos[0]-273.15}, Tev={current_pos[1]-273.15}")
-        local_min_val = [None, None, float('inf')]
+        print(f"\n新しい初期値: Tec_bt={current_pos[0]-273.15}, Tec_up={current_pos[1]-273.15}, Tev={current_pos[2]-273.15}")
+        local_min_val = [None, None, None, float('inf')]
         violation_found = False
         
         for i in range(iterations):
             eval_val_current = eval_func(Tec_bt, Tec_up, Tev, Q_load)[0]
             
-            grad = np.array([((eval_func(Tec+ epsilon, Tev, Q_load)[0] - eval_func(Tec- epsilon, Tev, Q_load)[0] ) / (2* epsilon)),
-                             ((eval_func(Tec, Tev+ epsilon, Q_load)[0] - eval_func(Tec, Tev- epsilon, Q_load)[0] ) / (2* epsilon))])
+            grad_0 = (eval_func(Tec_bt + epsilon, Tec_up, Tev, Q_load)[0] - eval_func(Tec_bt - epsilon, Tec_up, Tev, Q_load)[0]) / (2* epsilon)
+            grad_1 = (eval_func(Tec_bt, Tec_up + epsilon, Tev, Q_load)[0] - eval_func(Tec_bt, Tec_up - epsilon, Tev, Q_load)[0]) / (2* epsilon)
+            grad_2 = (eval_func(Tec_bt, Tec_up, Tev + epsilon, Q_load)[0] - eval_func(Tec_bt, Tec_up, Tev - epsilon, Q_load)[0]) / (2* epsilon)
+            grad = np.array([grad_0, grad_1, grad_2])
             grad_norm = np.linalg.norm(grad)    
             if grad_norm > grad_clip_threshold:
                 grad = grad / grad_norm * grad_clip_threshold
@@ -180,55 +189,59 @@ for j in range(1,7):
             update_vector = learning_rate_adam * m_hat / (np.sqrt(v_hat) + epsilon_adam)
             next_pos_candidate = current_pos - update_vector
             
-            Tec_candidate = next_pos_candidate[0]
-            Tev_candidate = next_pos_candidate[1]
-            eval_val_next = eval_func(Tec_candidate, Tev_candidate, Q_load)[0]
+            Tec_bt_candidate = next_pos_candidate[0]
+            Tec_up_candidate = next_pos_candidate[1]
+            Tev_candidate = next_pos_candidate[2]
+            eval_val_next = eval_func(Tec_bt_candidate, Tec_up_candidate, Tev_candidate, Q_load)[0]
             
             if np.isnan(next_pos_candidate).any():
                 print(f"\nステップ {i+1} で値がnanになりました")
                 violation_found = True
                 break
             
-            if next_pos_candidate[1] <= 300 or next_pos_candidate[0] <= next_pos_candidate[1]:
-                print(f"\nステップ {i+1} で制約違反。", 'T_ec=', next_pos_candidate[0], 'T_ev=', next_pos_candidate[1])
+            if Tev <= 300 or Tec_bt_candidate <= Tec_up_candidate or Tec_bt_candidate <= Tev :
+                print(f"\nステップ {i+1} で制約違反。")
                 violation_found = True
                 break
             
             current_pos = next_pos_candidate
-            Tec = current_pos[0]
-            Tev = current_pos[1]
+            Tec_bt = current_pos[0]
+            Tec_up = current_pos[1]
+            Tev = current_pos[2]
             eval_val_current = eval_val_next
             
             if eval_val_current < 0.5:
                 print(f"\nステップ {i+1} で評価関数の値が {eval_val_current} となり、0.5未満になったため計算を終了します。")
-                print('Tec=', Tec_candidate-273.15, 'Tev=', Tev_candidate-273.15)
-                global_min_val = [Tec, Tev, eval_val_current]
+                print('Tec_bt=', Tec_bt-273.15, 'Tec_up=', Tec_up-273.15, 'Tev=', Tev-273.15)
+                global_min_val = [Tec_bt, Tec_up, Tev, eval_val_current]
                 convergence = True
                 break
             
             if(i+ 1)%5 == 0:
-                print('Tec=', Tec-273.15, 'Tev=', Tev-273.15, 'eval_func=', eval_val_current)
+                print('Tec_bt=', Tec_bt-273.15, 'Tec_up=', Tec_up-273.15, 'Tev=', Tev-273.15, eval_val_current)
                 print('step', i+1)
                 
-            if eval_val_current < local_min_val[2]:
-                local_min_val = [Tec, Tev, eval_val_current]
+            if eval_val_current < local_min_val[3]:
+                local_min_val = [Tec_bt, Tec_up, Tev, eval_val_current]
                 
         if convergence:
             break
         
         if local_min_val[0] is not None:
-            if local_min_val[2] < global_min_val[2]:
+            if local_min_val[3] < global_min_val[3]:
                 global_min_val = local_min_val
                 
-    (eval_val, df_ec, df_vl, df_cl, df_ll, T_hs, Tec, T_ave_cl, P_cap, P_loss_wick, 
-     P_loss_gr, P_loss_vl, P_loss_cl, P_loss_ll, result_dict) = eval_func(global_min_val[0], global_min_val[1], Q_load)
+    (eval_val, df_ec_bt, df_ec_up, df_vl, df_cl, df_ll, T_hs, Tec_bt, Tec_up, T_ave_cl, P_cap, P_loss_wick, 
+     P_loss_gr, P_loss_vl, P_loss_cl, P_loss_ll, result_dict) = eval_func(global_min_val[0], global_min_val[1], global_min_val[2], Q_load)
     
     status_str = "True" if convergence else "False"
     sub_dir_name = f"{timestamp}_{Q_load}W"
     sub_dir = os.path.join(timestamp, sub_dir_name)
     os.makedirs(sub_dir, exist_ok=True)
-    file_path_ec = os.path.join(sub_dir, f'ec_{timestamp}_{Q_load}W_{status_str}.csv')
-    df_ec.to_csv(file_path_ec, index=False)
+    file_path_ec_bt = os.path.join(sub_dir, f'ecBT_{timestamp}_{Q_load}W_{status_str}.csv')
+    df_ec_bt.to_csv(file_path_ec_bt, index=False)
+    file_path_ec_up = os.path.join(sub_dir, f'ecUP_{timestamp}_{Q_load}W_{status_str}.csv')
+    df_ec_bt.to_csv(file_path_ec_up, index=False)
     file_path_vl = os.path.join(sub_dir, f'vl_{timestamp}_{Q_load}W_{status_str}.csv')
     df_vl.to_csv(file_path_vl, index=False)
     file_path_cl = os.path.join(sub_dir, f'cl_{timestamp}_{Q_load}W_{status_str}.csv')
@@ -242,7 +255,8 @@ for j in range(1,7):
     key_result_dict = {
         "Q_load":Q_load,
         "HS":T_hs-273.15,
-        "EC":Tec-273.15,
+        "EC_bt":Tec_bt-273.15,
+        "EC_up":Tec_up-273.15,
         "CL ave.":T_ave_cl-273.15,
         "wick":P_loss_wick,
         "groove":P_loss_gr,
