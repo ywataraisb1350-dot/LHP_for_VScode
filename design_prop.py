@@ -38,15 +38,15 @@ def design():
 
     W_wick = 280
     L_wick = 280
-    H_wick = 8
+    H_wick = 6
     k_wick = 16
     K_wick = 3.2*1e-13 #[m^2]
     r_max_pore = 3 #unit micro meter enter radius! not diameter!!!
     epsilon_wick = 0.6
     contact_angle = 10 #deg
     n_gr = 186
-    w_gr = 3
-    h_gr = 3
+    w_gr = 2
+    h_gr = 2
     L_gr = 62
 
     '''
@@ -77,8 +77,8 @@ def design():
     L_gr_up = 62
     '''
 
-    d_i_vl = 27.6
-    d_o_vl = 31.8
+    d_i_vl = 21.5
+    d_o_vl = 25.4
     L_vl = 15           #[m]
     t_insu_vl = 50      #thickness mm
     k_vl = 16           #[W/m-K]
