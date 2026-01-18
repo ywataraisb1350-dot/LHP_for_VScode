@@ -153,7 +153,13 @@ key_result = []
 now = datetime.now()
 timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
 os.makedirs(timestamp, exist_ok=True)
+df_cal_para = pd.DataFrame(list(dict_cal_parameter.items()), columns=['parameter', 'value'])
+file_path_cal_para = os.path.join(timestamp, f'cal_para_{timestamp}.csv')
+df_cal_para.to_csv(file_path_cal_para, index=False)
 
+df_design = pd.DataFrame(list(design_dict.items()), columns=['parameter', 'value'])
+file_path_design = os.path.join(timestamp, f'design_{timestamp}.csv')
+df_design.to_csv(file_path_design, index=False)
 
 for j in range(3,7):
     global_min_val = [None, None, None, float('inf')]
@@ -242,7 +248,7 @@ for j in range(3,7):
     file_path_ec_bt = os.path.join(sub_dir, f'ecBT_{timestamp}_{Q_load}W_{status_str}.csv')
     df_ec_bt.to_csv(file_path_ec_bt, index=False)
     file_path_ec_up = os.path.join(sub_dir, f'ecUP_{timestamp}_{Q_load}W_{status_str}.csv')
-    df_ec_bt.to_csv(file_path_ec_up, index=False)
+    df_ec_up.to_csv(file_path_ec_up, index=False)
     file_path_vl = os.path.join(sub_dir, f'vl_{timestamp}_{Q_load}W_{status_str}.csv')
     df_vl.to_csv(file_path_vl, index=False)
     file_path_cl = os.path.join(sub_dir, f'cl_{timestamp}_{Q_load}W_{status_str}.csv')
@@ -273,11 +279,3 @@ for j in range(3,7):
 df_keyres = pd.DataFrame(key_result)
 file_path_keyres = os.path.join(timestamp, f'KEYresult_{timestamp}.csv')
 df_keyres.to_csv(file_path_keyres, index=False)
-
-df_cal_para = pd.DataFrame(list(dict_cal_parameter.items()), columns=['parameter', 'value'])
-file_path_cal_para = os.path.join(timestamp, f'cal_para_{timestamp}.csv')
-df_cal_para.to_csv(file_path_cal_para, index=False)
-
-df_design = pd.DataFrame(list(design_dict.items()), columns=['parameter', 'value'])
-file_path_design = os.path.join(timestamp, f'design_{timestamp}.csv')
-df_design.to_csv(file_path_design, index=False)
