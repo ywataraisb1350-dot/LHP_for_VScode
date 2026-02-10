@@ -31,7 +31,7 @@ def ec_flat(Tec, Tev):
             'P[kPa]': P*1e-3,
             'T': T-273.15,
             'rho_g': p.rho_g(P,T),
-            'm_dot':M_dot* (Delta_L)/ (d.n_gr* d.L_wick),
+            'm_dot':M_dot* (Delta_L)/ (d.n_gr* d.L_gr),
             'Re':p.Re_g(u, P, T, d.d_gr),
             'h_g':p.h_g(u, P, T, d.d_gr),
             'tau_g':p.tau_g(u, P, T, d.d_gr),
@@ -52,7 +52,7 @@ def ec_flat(Tec, Tev):
         
         u = M_dot* (i+ 1)* Delta_L/(d.n_gr* d.L_wick* p.rho_g(P_next, T_next)* d.w_gr* d.h_gr)
         
-        Q_gr = Q_gr+ (M_dot*i*Delta_L* p.Cp_g(T)* (T_next- T)/ (d.n_gr* d.L_gr))+ (M_dot*Delta_L* p.Cp_g(Tev)* (T_next- Tev)/ (d.n_gr* d.L_gr))* d.n_gr
+        Q_gr = Q_gr+ (M_dot*i*Delta_L* p.Cp_g(T)* (T_next- T)/ d.L_gr)+ (M_dot*Delta_L* p.Cp_g(Tev)* (T_next- Tev)/ d.L_gr)
         P_loss_gr = P_loss_gr+ P- P_next
         
         P, T = P_next, T_next
@@ -77,6 +77,6 @@ def ec_flat(Tec, Tev):
 
     P_cap = 2*p.sigma(Tev)* math.cos(d.contact_angle)/d.r_max_pore
     P_loss_wick_flat = p.mu_l(Tev)* (d.H_wick- d.h_gr) * M_dot/(d.K_wick* d.A_wick* p.rho_l(Tev))
-    P_loss_wick_gr = p.mu_l(Tev)* d.h_gr* M_dot/(d.K_wick* (d.A_wick- d.w_gr* d.L_gr* d.n_gr) * p.rho_l(Tev))
+    P_loss_wick_gr = p.mu_l(Tev)* d.h_gr* M_dot/(d.K_wick* (d.w_gr* d.L_gr* (d.n_gr+1)) * p.rho_l(Tev)) #w_gr = pitch 
 
     return P, T, df_ec, M_dot, Q_ev, Q_gr, P_loss_gr, P_loss_wick_flat, P_loss_wick_gr, P_cap
