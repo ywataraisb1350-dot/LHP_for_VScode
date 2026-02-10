@@ -8,23 +8,23 @@ from datetime import datetime
 
 def design():
     #design parameter input zone
-    A_hs = 152* 79* 8
+    A_hs = 151* 75* 8
     csv_path = 'R1233zdE.csv'
     csv_path_inv = 'R1233zdE_inv.csv'
 
     W_ec = 370 #mm
-    L_ec = 370  #mm
-    t_ec_bt = 5 #mm
-    t_ec = 5   #mm
-    t_ec_up = 5 #mm
+    L_ec = 355  #mm
+    t_ec_bt = 10 #mm
+    t_ec = 30   #mm
+    t_ec_up = 10 #mm
     k_ec = 390  #conductivity
-    H_ec = 40   #mm
+    H_ec = 79   #mm
 
-    r_cc = 170
-    t_cc_bt = 4
-    t_cc_up = 4
-    t_cc = 4
-    H_cc = 250
+    r_cc = 185
+    t_cc_bt = 5
+    t_cc_up = 5
+    t_cc = 5
+    H_cc = 120
 
     k_flange = 16
     t_flange = 4
@@ -35,8 +35,11 @@ def design():
     n_flange = 4
     w_ccpipe = 90
     l_ccpipe = 50
+    
+    A_ec_huta = 21938
+    l_ccpipe_t_huta = 10
 
-    W_wick = 280
+    W_wick = 60*3*4
     L_wick = 280
     H_wick = 6
     k_wick = 16
@@ -44,10 +47,10 @@ def design():
     r_max_pore = 3 #unit micro meter enter radius! not diameter!!!
     epsilon_wick = 0.6
     contact_angle = 10 #deg
-    n_gr = 186
-    w_gr = 2
-    h_gr = 2
-    L_gr = 62
+    n_gr = 48*16 + 49*8
+    w_gr = 1.5
+    h_gr = 1.5
+    L_gr = 54
 
     '''
     W_wick_btm = 280
@@ -77,7 +80,7 @@ def design():
     L_gr_up = 62
     '''
 
-    d_i_vl = 21.5
+    d_i_vl = 22.1
     d_o_vl = 25.4
     L_vl = 15           #[m]
     t_insu_vl = 50      #thickness mm
@@ -137,6 +140,9 @@ def design():
     w_ccpipe = w_ccpipe*1e-3
     l_ccpipe = l_ccpipe*1e-3
     L_ccpipe = w_ccpipe+ 2* l_ccpipe
+    
+    A_ec_huta = A_ec_huta*1e-6
+    l_ccpipe_t_huta = l_ccpipe_t_huta*1e-3
 
     W_wick = W_wick*1e-3
     L_wick = L_wick*1e-3
@@ -198,6 +204,9 @@ def design():
             "w_ccpipe":w_ccpipe,
             "l_ccpipe":l_ccpipe,
             "L_ccpipe":L_ccpipe,
+            
+            "A_ec_huta":A_ec_huta,
+            "l_ccpipe_t_huta":l_ccpipe_t_huta,
 
             "W_wick":W_wick,
             "L_wick":L_wick,

@@ -12,15 +12,15 @@ import design_prop
 import ec_flat
 import transline
 
-epsilon = 0.05
-random_start_Tev_min, random_start_Tev_max = 20+273.15, 60 +273.15000000001
-random_start_deltat_min, random_start_deltat_max =1, 20
-random_start_Delta_BtUp_min,random_start_Delta_BtUp_max = (3,5)
-max_restarts = 100
-iterations = 5000
+epsilon = 0.01
+random_start_Tev_min, random_start_Tev_max = 32.5197944730752+273.15, 32.5197944730752+273.15000000001
+random_start_deltat_min, random_start_deltat_max =2.101096776253, 2.1010967762538
+random_start_Delta_BtUp_min,random_start_Delta_BtUp_max = 0.73576560878600,0.735765608786004
+max_restarts = 1
+iterations = 1500
 learning_ratio = 2e-2
 grad_clip_threshold = 50000
-learning_rate_adam = 0.3 # 固定学習率より少し大きめに設定できることが多い
+learning_rate_adam = 0.2 # 固定学習率より少し大きめに設定できることが多い
 beta1 = 0.9
 beta2 = 0.9
 epsilon_adam = 0.1
@@ -155,7 +155,7 @@ timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
 os.makedirs(timestamp, exist_ok=True)
 
 
-for j in range(3,7):
+for j in range(1,2):
     global_min_val = [None, None, None, float('inf')]
     convergence = False
     Q_load = 1000* j

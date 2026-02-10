@@ -12,11 +12,11 @@ import design_prop
 import ec_flat
 import transline
 
-epsilon = 1e-6
-random_start_Tev_min, random_start_Tev_max = 40+273.15, 50.09660727333085 +273.15000000001
-random_start_deltat_min, random_start_deltat_max =(47.676987038329-42.09660727333085), (70.676987038329-42.0966072733308)
-max_restarts = 100
-iterations = 30000
+epsilon = 0.5
+random_start_Tev_min, random_start_Tev_max = 30+273.15, 50.09660727333085 +273.15000000001
+random_start_deltat_min, random_start_deltat_max =(47.676987038329-42.09660727333085), (50.676987038329-42.0966072733308)
+max_restarts = 5
+iterations = 3000
 learning_ratio = 2e-2
 grad_clip_threshold = 50000
 learning_rate_adam = 0.2 # 固定学習率より少し大きめに設定できることが多い
@@ -67,7 +67,7 @@ def eval_func(Tec, Tev, Q_load):
     
     T_ccin = p.T_sat(P)
 
-    G_ec_ccc = d.k_flange* (d.w_flange* d.l_flange- d.w_flange_hole* d.l_flange_hole)/ d.L_ccpipe
+    G_ec_ccc = d.k_flange* d.A_ec_huta/ d.l_ccpipe_t_huta
     G_ccc_ccin = 4.36* p.k_l(T_ccin)* (2* math.pi* d.r_cc* d.H_cc)/ d.d_e_cc + 4.36* p.k_l(T_ccin)* math.pi* d.r_cc* 0.25
 
     T_ccc =( (G_ccc_ccin* T_ccin + d.h_out* (math.pi* d.r_cc**2 *  0.25+ 2* math.pi* d.r_cc* d.H_cc)* d.T_amb + G_ec_ccc* Tec)/

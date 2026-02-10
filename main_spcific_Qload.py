@@ -12,12 +12,12 @@ import design_prop
 import ec_flat
 import transline
 
-Q_load = 1000
+Q_load = 6000
 
-epsilon = 0.01
-random_start_Tev_min, random_start_Tev_max = 41.51029048+273.15, 41.510290485 +273.15000000001
-random_start_deltat_min, random_start_deltat_max =2.11029693, 2.110296939
-max_restarts = 100
+epsilon = 0.1
+random_start_Tev_min, random_start_Tev_max = 54.51029048+273.15, 54.510290485 +273.15000000001
+random_start_deltat_min, random_start_deltat_max =12.11029693, 12.110296939
+max_restarts = 1
 iterations = 3000
 learning_ratio = 2e-2
 grad_clip_threshold = 50000

@@ -14,15 +14,15 @@ import transline
 
 Q_load = 1000
 
-epsilon = 0.05
-random_start_Tev_min, random_start_Tev_max = 41.51029048+273.15, 41.510290485 +273.15000000001
-random_start_deltat_min, random_start_deltat_max =2.11029693, 2.110296939
-random_start_Delta_BtUp_min,random_start_Delta_BtUp_max = 0.62, 0.63
-max_restarts = 1000
-iterations = 15000
+epsilon = 0.005
+random_start_Tev_min, random_start_Tev_max = 36.6463735439685+273.15, 36.6463735439685 +273.15000000001
+random_start_deltat_min, random_start_deltat_max =0.72798403065989, 0.727984030659897
+random_start_Delta_BtUp_min,random_start_Delta_BtUp_max = 2.060448988114, 2.0604489881145
+max_restarts = 1
+iterations = 5000
 learning_ratio = 2e-2
 grad_clip_threshold = 50000
-learning_rate_adam = 0.4 # 固定学習率より少し大きめに設定できることが多い
+learning_rate_adam = 0.2 # 固定学習率より少し大きめに設定できることが多い
 beta1 = 0.9
 beta2 = 0.9
 epsilon_adam = 0.1
@@ -238,7 +238,7 @@ status_str = "True" if convergence else "False"
 file_path_ec_bt = os.path.join(dir, f'ecBT_{timestamp}_{Q_load}W_{status_str}.csv')
 df_ec_bt.to_csv(file_path_ec_bt, index=False)
 file_path_ec_up = os.path.join(dir, f'ecUP_{timestamp}_{Q_load}W_{status_str}.csv')
-df_ec_bt.to_csv(file_path_ec_up, index=False)
+df_ec_up.to_csv(file_path_ec_up, index=False)
 file_path_vl = os.path.join(dir, f'vl_{timestamp}_{Q_load}W_{status_str}.csv')
 df_vl.to_csv(file_path_vl, index=False)
 file_path_cl = os.path.join(dir, f'cl_{timestamp}_{Q_load}W_{status_str}.csv')
