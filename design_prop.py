@@ -39,8 +39,8 @@ def design():
     A_ec_huta = 21938
     l_ccpipe_t_huta = 10
 
-    W_wick = 60*3*4
-    L_wick = 280
+    W_wick = 60*24
+    L_wick = 140
     H_wick = 6
     k_wick = 16
     K_wick = 3.2*1e-13 #[m^2]

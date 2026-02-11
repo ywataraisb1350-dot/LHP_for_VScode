@@ -19,7 +19,7 @@ random_start_deltat_min, random_start_deltat_max =(47.676987038329-42.0966072733
 max_restarts = 2
 iterations = 3000
 learning_ratio = 2e-2
-grad_clip_threshold = 20000
+grad_clip_threshold = 10000
 
 learning_rate_adam = 0.2 # 固定学習率より少し大きめに設定できることが多い
 beta1 = 0.9
