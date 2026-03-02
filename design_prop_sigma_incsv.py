@@ -352,7 +352,7 @@ def prop(csv_path, csv_path_inv):
         return nu_g
 
     def sigma(T):
-        sigma = 0.06195* (1-(T/438.75))**1.277 #R1233zdEのみ，他の流体は別の実験式などが必要
+        sigma = prop_all(T, 'sigma', all_funcs)
         return sigma
 
     def Re_l(u, T, d):
