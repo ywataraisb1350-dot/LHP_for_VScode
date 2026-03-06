@@ -9,10 +9,10 @@ from datetime import datetime
 def design():
     #design parameter input zone
     A_hs = 151* 75* 8
-    csv_path = 'R1233zdE.csv'
-    csv_path_inv = 'R1233zdE_inv.csv'
+    csv_path = 'water.csv'
+    csv_path_inv = 'water_inv.csv'
 
-    W_ec = 370 #mm
+    W_ec = 372 #mm
     L_ec = 355  #mm
     t_ec_bt = 10 #mm
     t_ec = 30   #mm
@@ -39,17 +39,17 @@ def design():
     A_ec_huta = 21938
     l_ccpipe_t_huta = 10
 
-    W_wick = 60*24
-    L_wick = 140
+    W_wick = 60*12
+    L_wick = 280
     H_wick = 6
     k_wick = 16
     K_wick = 3.2*1e-13 #[m^2]
     r_max_pore = 3 #unit micro meter enter radius! not diameter!!!
     epsilon_wick = 0.6
     contact_angle = 10 #deg
-    n_gr = 32*64 + 33*32
-    w_gr = 0.5
-    h_gr = 0.5
+    n_gr = 134*12 -12
+    w_gr = 1
+    h_gr = 1
     L_gr = 54
 
     '''

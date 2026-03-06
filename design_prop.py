@@ -18,7 +18,7 @@ def design():
     t_ec = 30   #mm
     t_ec_up = 10 #mm
     k_ec = 390  #conductivity
-    H_ec = 79   #mm
+    H_ec = 49   #mm
 
     r_cc = 185
     t_cc_bt = 5
@@ -39,18 +39,18 @@ def design():
     A_ec_huta = 21938
     l_ccpipe_t_huta = 10
 
-    W_wick = 60*24
-    L_wick = 140
+    W_wick = (40+40*2)*5
+    L_wick = 280
     H_wick = 6
     k_wick = 16
     K_wick = 3.2*1e-13 #[m^2]
     r_max_pore = 3 #unit micro meter enter radius! not diameter!!!
     epsilon_wick = 0.6
     contact_angle = 10 #deg
-    n_gr = 32*64 + 33*32
-    w_gr = 0.5
-    h_gr = 0.5
-    L_gr = 54
+    n_gr = 135*3*5
+    w_gr = 1
+    h_gr = 1
+    L_gr = 34
 
     '''
     W_wick_btm = 280
