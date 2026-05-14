@@ -18,7 +18,7 @@ def design():
     t_ec = 30   #mm
     t_ec_up = 10 #mm
     k_ec = 390  #conductivity
-    H_ec = 49   #mm
+    H_ec = 59   #mm
 
     r_cc = 185
     t_cc_bt = 5
@@ -39,18 +39,18 @@ def design():
     A_ec_huta = 21938
     l_ccpipe_t_huta = 10
 
-    W_wick = (40+40*2)*5
-    L_wick = 280
+    W_wick = (40+60+40)*4
+    L_wick = 278
     H_wick = 6
     k_wick = 16
     K_wick = 3.2*1e-13 #[m^2]
     r_max_pore = 3 #unit micro meter enter radius! not diameter!!!
     epsilon_wick = 0.6
     contact_angle = 10 #deg
-    n_gr = 135*3*5
-    w_gr = 1
-    h_gr = 1
-    L_gr = 34
+    n_gr = 69*24*2
+    w_gr = 0.5
+    h_gr = 0.5
+    L_gr = 60
 
     '''
     W_wick_btm = 280
@@ -105,7 +105,7 @@ def design():
     alpha = 5000   #[W/m^2-K] 蒸発熱伝達率A_ecベースの値
     h_hs_ec = 4000  #[W/m^2-K] 熱源-蒸発器熱伝達率
     h_out = 20.0    #[W/m^2-K] 決め打ち外部への放熱伝達率
-    h_sink = 800.0  #[W/m^2-K] 決め打ち外部へのコンデンサ放熱伝達率
+    h_sink = 400.0  #[W/m^2-K] 決め打ち外部へのコンデンサ放熱伝達率
     grav_ac = 9.8   #gravity_acceralation
 
     num_cal_ec, num_cal_vl, num_cal_cl, num_cal_ll = 100, 100, 200, 100

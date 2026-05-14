@@ -8,7 +8,7 @@ import types
 from scipy.interpolate import interp1d
 from datetime import datetime
 
-import design_prop_sigma_incsv as dp
+import design_prop as dp
 import ec_flat
 import transline
 
