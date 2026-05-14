@@ -87,11 +87,12 @@ def design():
     k_vl = 16           #[W/m-K]
     k_insu_vl = 0.004   #[W/m-K]
 
-    d_i_cl = 16.5
-    d_o_cl = 19.1
-    L_cl = 15           #[m]
-    k_cl = 16
+    d_i_cl = 7.93
+    d_o_cl = 9.53
+    L_cl = 3.6           #[m]
+    k_cl = 398
     k_insu_cl = 1000    #実際はinsuなし，計算の便宜を図るため導入
+    n_cl = 8
 
     d_i_ll = 16.5
     d_o_ll = 19.1
