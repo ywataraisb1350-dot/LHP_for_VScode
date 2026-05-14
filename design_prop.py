@@ -237,6 +237,7 @@ def design():
             "L_cl":L_cl,
             "k_cl":k_cl,
             "k_insu_cl":k_insu_cl,
+            "n_cl":n_cl,
 
             "d_i_ll":d_i_ll,
             "d_o_ll":d_o_ll,
