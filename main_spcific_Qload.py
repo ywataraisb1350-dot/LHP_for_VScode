@@ -8,23 +8,22 @@ import types
 from scipy.interpolate import interp1d
 from datetime import datetime
 
-import design_prop
+import design_prop_sigma_incsv as dp
 import ec_flat
 import transline
 
 Q_load = 6000
 
 epsilon = 0.1
-random_start_Tev_min, random_start_Tev_max = 54.51029048+273.15, 54.510290485 +273.15000000001
-random_start_deltat_min, random_start_deltat_max =12.11029693, 12.110296939
-max_restarts = 1
-iterations = 3000
-learning_ratio = 2e-2
-grad_clip_threshold = 50000
+random_start_Tev_min, random_start_Tev_max = 56.4+273.15, 66.41 +273.15000000001
+random_start_deltat_min, random_start_deltat_max =2.3, 12.31
+max_restarts = 10
+iterations = 300
+grad_clip_threshold = 20000
 learning_rate_adam = 0.2 # 固定学習率より少し大きめに設定できることが多い
 beta1 = 0.9
 beta2 = 0.9
-epsilon_adam = 0.1
+epsilon_adam = 0.2
 m_t = np.zeros(2) # モーメントベクトル
 v_t = np.zeros(2)
 
@@ -36,7 +35,6 @@ dict_cal_parameter = {
     "random_start_deltaT_max":random_start_deltat_max,
     "max_restarts":max_restarts,
     "iterations":iterations,
-    "learning_ratio":learning_ratio,
     "grad_clip_threshold":grad_clip_threshold,
     "learning_rate_adam":learning_rate_adam,
     "beta1":beta1,
@@ -44,9 +42,9 @@ dict_cal_parameter = {
     "epsilon_adam":epsilon_adam
 }
 
-design_dict = design_prop.design()
+design_dict = dp.design()
 d = types.SimpleNamespace(**design_dict)
-prop_dict = design_prop.prop(d.csv_path, d.csv_path_inv)
+prop_dict = dp.prop(d.csv_path, d.csv_path_inv)
 p = types.SimpleNamespace(**prop_dict)
 
 def eval_func(Tec, Tev, Q_load):
@@ -136,7 +134,9 @@ for restart_count in range(max_restarts):
         print(f"\nリスタート{restart_count+1}")
         print(f"\n新しい初期値: Tec={current_pos[0]-273.15}, Tev={current_pos[1]-273.15}")
         local_min_val = [None, None, float('inf')]
+        global_min_val = [None, None, float('inf')]
         violation_found = False
+        convergence = False
         
         for i in range(iterations):
             eval_val_current = eval_func(Tec, Tev, Q_load)[0]

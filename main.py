@@ -15,11 +15,10 @@ import transline
 epsilon = 0.2
 
 random_start_Tev_min, random_start_Tev_max = 30+273.15, 50.09660727333085 +273.15000000001
-random_start_deltat_min, random_start_deltat_max =(47.676987038329-42.09660727333085), (50.676987038329-42.0966072733308)
-max_restarts = 2
+random_start_deltat_min, random_start_deltat_max =(43.676987038329-42.09660727333085), (50.676987038329-42.0966072733308)
+max_restarts = 4
 iterations = 3000
-learning_ratio = 2e-2
-grad_clip_threshold = 10000
+grad_clip_threshold = 20000
 
 learning_rate_adam = 0.2 # 固定学習率より少し大きめに設定できることが多い
 beta1 = 0.9
