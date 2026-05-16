@@ -1,0 +1,14 @@
+parameter,value
+epsilon,0.1
+random_start_Tev_min,313.15
+random_start_Tev_max,323.2466072733408
+random_start_deltaT_min,5.580379764998156
+random_start_deltaT_max,28.580379764998206
+max_restarts,100.0
+iterations,3000.0
+learning_ratio,0.02
+grad_clip_threshold,50000.0
+learning_rate_adam,0.3
+beta1,0.9
+beta2,0.9
+epsilon_adam,0.1
