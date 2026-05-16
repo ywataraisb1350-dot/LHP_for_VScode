@@ -47,10 +47,10 @@ def design():
     r_max_pore = 3 #unit micro meter enter radius! not diameter!!!
     epsilon_wick = 0.6
     contact_angle = 10 #deg
-    n_gr = 69*24*2
-    w_gr = 0.5
-    h_gr = 0.5
-    L_gr = 60
+    n_gr = 69*24
+    w_gr = 1
+    h_gr = 1
+    L_gr = 47
 
     '''
     W_wick_btm = 280
@@ -87,12 +87,12 @@ def design():
     k_vl = 16           #[W/m-K]
     k_insu_vl = 0.004   #[W/m-K]
 
-    d_i_cl = 7.93
-    d_o_cl = 9.53
-    L_cl = 3.6           #[m]
-    k_cl = 398
+    d_i_cl = 16.5
+    d_o_cl = 19.1
+    L_cl = 13           #[m]
+    k_cl = 200
     k_insu_cl = 1000    #実際はinsuなし，計算の便宜を図るため導入
-    n_cl = 8
+    n_cl = 2
 
     d_i_ll = 16.5
     d_o_ll = 19.1
@@ -106,7 +106,7 @@ def design():
     alpha = 5000   #[W/m^2-K] 蒸発熱伝達率A_ecベースの値
     h_hs_ec = 4000  #[W/m^2-K] 熱源-蒸発器熱伝達率
     h_out = 20.0    #[W/m^2-K] 決め打ち外部への放熱伝達率
-    h_sink = 400.0  #[W/m^2-K] 決め打ち外部へのコンデンサ放熱伝達率
+    h_sink = 500.0  #[W/m^2-K] 決め打ち外部へのコンデンサ放熱伝達率
     grav_ac = 9.8   #gravity_acceralation
 
     num_cal_ec, num_cal_vl, num_cal_cl, num_cal_ll = 100, 100, 200, 100

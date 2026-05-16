@@ -43,9 +43,9 @@ def ec_flat(Tec, Tev):
     
     for i in range(d.num_cal_ec+ 1):
         
-        T_next = ( (p.h_g(u, P, T, d.d_gr)*(Delta_L* d.w_gr+ 2* Delta_L* d.h_gr)*(Tec- Tev)
-             + (M_dot*i*Delta_L* p.Cp_g(T)* T/ (d.n_gr* d.L_gr))+ (M_dot*Delta_L* p.Cp_g(Tev)* Tev/ (d.n_gr* d.L_gr)))
-             / (  (M_dot*i*Delta_L* p.Cp_g(T)/ (d.n_gr* d.L_gr))+ (M_dot*Delta_L* p.Cp_g(Tev)/ (d.n_gr* d.L_gr)) ))
+        T_next = ( (p.h_g(u, P, T, d.d_gr)*(Delta_L* d.w_gr)*(Tec- T)
+             + (M_dot*i* p.Cp_g(T)* T/ (d.n_gr* d.num_cal_ec))+ (M_dot* p.Cp_g(Tev)* Tev/ (d.n_gr* d.num_cal_ec)))
+             / (  (M_dot*i* p.Cp_g(T)/ (d.n_gr* d.num_cal_ec))+ (M_dot* p.Cp_g(Tev)/ (d.n_gr* d.num_cal_ec)) ))
         
         u_max = u_max_times_rho/ p.rho_g(P, T)
         P_next = P- 4* p.tau_g(u_max, P, T, d.d_gr)* Delta_L/ d.d_gr
