@@ -12,17 +12,17 @@ import design_prop as dp
 import ec_flat
 import transline
 
-Q_load = 6000
+Q_load = 5000
 
-epsilon = 0.1
+epsilon = 0.5
 random_start_Tev_min, random_start_Tev_max = 56.4+273.15, 66.41 +273.15000000001
 random_start_deltat_min, random_start_deltat_max =2.3, 12.31
-max_restarts = 10
-iterations = 300
-grad_clip_threshold = 20000
+max_restarts = 1
+iterations = 2000
+grad_clip_threshold = 30000
 learning_rate_adam = 0.2 # 固定学習率より少し大きめに設定できることが多い
 beta1 = 0.9
-beta2 = 0.9
+beta2 = 0.8
 epsilon_adam = 0.2
 m_t = np.zeros(2) # モーメントベクトル
 v_t = np.zeros(2)
@@ -49,7 +49,7 @@ p = types.SimpleNamespace(**prop_dict)
 
 def eval_func(Tec, Tev, Q_load):
 
-    P, T, df_ec, M_dot, Q_ev, Q_gr, P_loss_gr, P_loss_wick_flat, P_loss_wick_gr, P_cap = ec_flat.ec_flat(Tec, Tev)
+    P, T, df_ec, M_dot, m_dot, dm_dot,  Q_ev, Q_gr, P_loss_gr, P_loss_wick_flat, P_loss_wick_gr, P_cap = ec_flat.ec_flat(Tec, Tev)
     P_loss_wick = P_loss_wick_flat+ P_loss_wick_gr
 
     rho = p.rho_g(P,T)
@@ -116,7 +116,11 @@ def eval_func(Tec, Tev, Q_load):
         "P_loss_gr":P_loss_gr,
         "P_loss_vl":P_loss_vl,
         "P_loss_cl":P_loss_cl,
-        "P_loss_ll":P_loss_ll
+        "P_loss_ll":P_loss_ll,
+        
+        "M_dot":M_dot,
+        "m_dot":m_dot,
+        "dm_dot":dm_dot
     }
 
     return (eval_ec+eval_cc, df_ec, df_vl, df_cl, df_ll, 

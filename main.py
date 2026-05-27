@@ -16,8 +16,8 @@ epsilon = 0.2
 
 random_start_Tev_min, random_start_Tev_max = 30+273.15, 50.09660727333085 +273.15000000001
 random_start_deltat_min, random_start_deltat_max =(43.676987038329-42.09660727333085), (50.676987038329-42.0966072733308)
-max_restarts = 4
-iterations = 3000
+max_restarts = 2
+iterations = 1000
 grad_clip_threshold = 20000
 
 learning_rate_adam = 0.2 # 固定学習率より少し大きめに設定できることが多い
@@ -49,7 +49,7 @@ p = types.SimpleNamespace(**prop_dict)
 
 def eval_func(Tec, Tev, Q_load):
 
-    P, T, df_ec, M_dot, Q_ev, Q_gr, P_loss_gr, P_loss_wick_flat, P_loss_wick_gr, P_cap = ec_flat.ec_flat(Tec, Tev)
+    P, T, df_ec, M_dot, m_dot, dm_dot,  Q_ev, Q_gr, P_loss_gr, P_loss_wick_flat, P_loss_wick_gr, P_cap = ec_flat.ec_flat(Tec, Tev)
     P_loss_wick = P_loss_wick_flat+ P_loss_wick_gr
 
     rho = p.rho_g(P,T)
@@ -116,7 +116,11 @@ def eval_func(Tec, Tev, Q_load):
         "P_loss_gr":P_loss_gr,
         "P_loss_vl":P_loss_vl,
         "P_loss_cl":P_loss_cl,
-        "P_loss_ll":P_loss_ll
+        "P_loss_ll":P_loss_ll,
+        
+        "M_dot":M_dot,
+        "m_dot":m_dot,
+        "dm_dot":dm_dot
     }
 
     return (eval_ec+eval_cc, df_ec, df_vl, df_cl, df_ll, 

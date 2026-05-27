@@ -87,10 +87,10 @@ def design():
     k_vl = 16           #[W/m-K]
     k_insu_vl = 0.004   #[W/m-K]
 
-    d_i_cl = 16.5
-    d_o_cl = 19.1
+    d_i_cl = 15.88
+    d_o_cl = 14.88
     L_cl = 13           #[m]
-    k_cl = 200
+    k_cl = 100
     k_insu_cl = 1000    #実際はinsuなし，計算の便宜を図るため導入
     n_cl = 2
 
@@ -106,7 +106,7 @@ def design():
     alpha = 5000   #[W/m^2-K] 蒸発熱伝達率A_ecベースの値
     h_hs_ec = 4000  #[W/m^2-K] 熱源-蒸発器熱伝達率
     h_out = 20.0    #[W/m^2-K] 決め打ち外部への放熱伝達率
-    h_sink = 500.0  #[W/m^2-K] 決め打ち外部へのコンデンサ放熱伝達率
+    h_sink = 750  #[W/m^2-K] 決め打ち外部へのコンデンサ放熱伝達率
     grav_ac = 9.8   #gravity_acceralation
 
     num_cal_ec, num_cal_vl, num_cal_cl, num_cal_ll = 100, 100, 200, 100
