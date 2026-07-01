@@ -8,7 +8,7 @@ import types
 from scipy.interpolate import interp1d
 from datetime import datetime
 
-import design_prop as dp
+import design_prop_sigma_incsv as dp
 import ec_flat
 import transline
 
@@ -140,7 +140,7 @@ file_path_design = os.path.join(timestamp, f'design_{timestamp}.csv')
 df_design.to_csv(file_path_design, index=False)
 
 
-for j in range(1,7):
+for j in [1,2,3,4,5,5.6]:
     global_min_val = [None, None, float('inf')]
     convergence = False
     Q_load = 1000* j

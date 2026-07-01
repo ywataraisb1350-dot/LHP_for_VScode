@@ -39,7 +39,7 @@ def design():
     A_ec_huta = 21938
     l_ccpipe_t_huta = 10
 
-    W_wick = 60*12
+    W_wick = 140*4
     L_wick = 280
     H_wick = 6
     k_wick = 16
@@ -47,10 +47,10 @@ def design():
     r_max_pore = 3 #unit micro meter enter radius! not diameter!!!
     epsilon_wick = 0.6
     contact_angle = 10 #deg
-    n_gr = 134*12 -12
+    n_gr = 69*6*4
     w_gr = 1
     h_gr = 1
-    L_gr = 54
+    L_gr = 60
 
     '''
     W_wick_btm = 280
@@ -87,10 +87,10 @@ def design():
     k_vl = 16           #[W/m-K]
     k_insu_vl = 0.004   #[W/m-K]
 
-    d_i_cl = 16.5
-    d_o_cl = 19.1
-    L_cl = 15           #[m]
-    k_cl = 16
+    d_i_cl = 14.88
+    d_o_cl = 15.88
+    L_cl = 13           #[m]
+    k_cl = 100
     k_insu_cl = 1000    #実際はinsuなし，計算の便宜を図るため導入
 
     d_i_ll = 16.5
@@ -102,7 +102,7 @@ def design():
 
     T_amb = 30      #[celsius temp]
     T_sink = 30
-    alpha = 5000   #[W/m^2-K] 蒸発熱伝達率A_ecベースの値
+    alpha = 10000   #[W/m^2-K] 蒸発熱伝達率A_ecベースの値
     h_hs_ec = 4000  #[W/m^2-K] 熱源-蒸発器熱伝達率
     h_out = 20.0    #[W/m^2-K] 決め打ち外部への放熱伝達率
     h_sink = 800.0  #[W/m^2-K] 決め打ち外部へのコンデンサ放熱伝達率
